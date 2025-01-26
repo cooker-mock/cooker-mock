@@ -9,6 +9,7 @@ const dataHandler = require('./io/dataHandler');
 
 const app = express();
 const PORT = process.env.PORT || 8088;
+const WEB_UI_DIST_RELATIVE_PATH = process.env.WEB_UI_DIST_RELATIVE_PATH;
 
 // Middleware
 app.use(bodyParser.json());
@@ -18,7 +19,7 @@ app.use(cors());
 const apiRoutes = require('./routes/api');
 app.use('/api', apiRoutes);
 
-const reactBuildPath = path.join(__dirname, 'public', 'web-ui-build');
+const reactBuildPath = path.join(__dirname, WEB_UI_DIST_RELATIVE_PATH);
 app.use(express.static(reactBuildPath));
 app.get('*', (req, res) => {
   res.sendFile(path.join(reactBuildPath, 'index.html'));

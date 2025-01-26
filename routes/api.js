@@ -32,9 +32,9 @@ const deleteFolderRecursive = (folderPath) => {
   }
 };
 
-// create or update mock api
 const createOrUpdateMockApi = (apiId, apiPath, description, method, scene, response, res) => {
-  const tempFolderPath = path.join(__dirname, 'temp', uuidv4());
+  const cookerTempPath = path.join(__dirname, '.cookerTemp');
+  const tempFolderPath = path.join(cookerTempPath, uuidv4());
   const apiFolderPath = getApiFolderPath(apiId);
 
   try {
@@ -67,6 +67,10 @@ const createOrUpdateMockApi = (apiId, apiPath, description, method, scene, respo
     deleteFolderRecursive(tempFolderPath);
     console.error(error);
     res.status(500).json({ error: 'Failed to create mock API' });
+  } finally {
+    if (fs.existsSync(cookerTempPath) && fs.readdirSync(cookerTempPath).length === 0) {
+      fs.rmdirSync(cookerTempPath);
+    }
   }
 };
 
