@@ -25,6 +25,7 @@
     "start": "node index.js mock",
     "dev": "nodemon index.js mock",
     "dev:both": "concurrently \"nodemon index.js mock\" \"cd web-ui && yarn start\"",
+    "build:ui": "cd web-ui && yarn build",
     "format": "prettier --write \"**/*.{js,json,css,html}\""
   }
 }

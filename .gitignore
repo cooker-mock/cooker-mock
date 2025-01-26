@@ -11,6 +11,7 @@ node_modules/
 
 # Build outputs
 dist/
+public/web-ui-build/
 
 # Miscellaneous
 .DS_Store
