@@ -1,0 +1,30 @@
+{
+  "name": "cooker-mock",
+  "version": "0.1.0",
+  "description": "The best front-end local mocking tool ever!",
+  "main": "index.js",
+  "repository": "git@github.com:Alex-xd/cooker.git",
+  "author": "boyuan <531237512@outlook.com>",
+  "license": "MIT",
+  "bin": {
+    "cooker": "index.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "uuidv4": "^6.2.13"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "nodemon": "^3.1.9",
+    "prettier": "^3.4.2"
+  },
+  "scripts": {
+    "start": "node index.js mock",
+    "dev": "nodemon index.js mock",
+    "dev:both": "concurrently \"nodemon index.js mock\" \"cd web-ui && yarn start\"",
+    "format": "prettier --write \"**/*.{js,json,css,html}\""
+  }
+}

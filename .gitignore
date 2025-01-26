@@ -1,0 +1,21 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Dependency directories
+node_modules/
+
+# Environment variables
+.env
+
+# Build outputs
+dist/
+
+# Miscellaneous
+.DS_Store
+*.swp
+*.swo
+*.lock
+.idea/
+.vscode/
