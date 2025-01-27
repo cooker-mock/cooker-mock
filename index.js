@@ -20,6 +20,7 @@ const apiRoutes = require('./routes/api');
 app.use('/api', apiRoutes);
 
 const reactBuildPath = path.join(__dirname, WEB_UI_DIST_RELATIVE_PATH);
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(reactBuildPath));
 app.get('*', (req, res) => {
   res.sendFile(path.join(reactBuildPath, 'index.html'));
