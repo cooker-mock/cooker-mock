@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Cooker Mock",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/index.js",
+      "args": ["mock"],
+      "runtimeArgs": ["--inspect-brk=9229"],
+      "envFile": "${workspaceFolder}/.env",
+      "console": "integratedTerminal"
+    }
+  ]
+}

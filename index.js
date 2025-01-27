@@ -5,10 +5,9 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const dataHandler = require('./io/dataHandler');
 
 const app = express();
-const PORT = process.env.PORT || 8088;
+const PORT = process.env.PORT;
 const WEB_UI_DIST_RELATIVE_PATH = process.env.WEB_UI_DIST_RELATIVE_PATH;
 
 // Middleware
