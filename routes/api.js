@@ -76,6 +76,11 @@ const createOrUpdateMockApi = (apiId, apiPath, description, method, scene, respo
 
 router.get('/mock', (req, res) => {
   try {
+    if (!fs.existsSync(mockDataDir)) {
+      res.json([]);
+      return;
+    }
+
     const mockDirs = fs.readdirSync(mockDataDir).filter((file) =>
       fs.statSync(path.join(mockDataDir, file)).isDirectory()
     );

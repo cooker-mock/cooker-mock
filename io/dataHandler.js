@@ -9,7 +9,7 @@ function getMockDataPath() {
   const userProjectPath = process.env.USER_PROJECT_PATH
     ? path.resolve(process.cwd(), process.env.USER_PROJECT_PATH)
     : process.cwd();
-  return path.join(userProjectPath, 'cooker-mock');
+  return path.join(userProjectPath, process.env.MOCK_DIR_NAME);
 }
 
 function ensureMockDataFolder(mockDataPath) {
