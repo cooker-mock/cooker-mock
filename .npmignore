@@ -1,0 +1,11 @@
+# Ignore directories
+web-ui/
+docs/
+.vscode/
+
+# Ignore other files
+*.log
+*.md
+*.lock
+.DS_Store
+.idea/
