@@ -2,12 +2,13 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 const fs = require('fs');
-const uuidv4 = require('uuid').v4;
 const dataHandler = require('../io/dataHandler');
+const { MOCK_CONFIG_FILE_NAME } = require('../constants');
 
-const mockDataDir = dataHandler.getMockDataPath();
-const getApiFolderPath = (apiId) => path.join(mockDataDir, apiId);
-const getConfigFilePath = (apiId) => path.join(getApiFolderPath(apiId), '.config');
+const mockDataRootDir = dataHandler.getMockDataRootPath();
+const getApiFolderPath = (apiId) => path.join(mockDataRootDir, apiId);
+const getConfigFilePath = (apiId) =>
+  path.join(getApiFolderPath(apiId), '.config');
 
 const readFile = (filePath) => {
   if (!fs.existsSync(filePath)) return null;
@@ -19,7 +20,7 @@ const writeFile = (filePath, data) => {
 };
 
 const deleteFolderRecursive = (folderPath) => {
-  if (fs.existsSync(folderPath)) {
+  if (fs.existsSync) {
     fs.readdirSync(folderPath).forEach((file) => {
       const curPath = path.join(folderPath, file);
       if (fs.lstatSync(curPath).isDirectory()) {
@@ -32,13 +33,23 @@ const deleteFolderRecursive = (folderPath) => {
   }
 };
 
-const createOrUpdateMockApi = (apiId, apiPath, description, method, scene, response, res) => {
-  const cookerTempPath = path.join(__dirname, '.cookerTemp');
-  const tempFolderPath = path.join(cookerTempPath, uuidv4());
-  const apiFolderPath = getApiFolderPath(apiId);
+const createOrUpdateMockApi = ({
+  apiId,
+  apiPath,
+  description,
+  method,
+  scene,
+  response,
+  res,
+  on,
+}) => {
+  const apiFolderPath = path.join(mockDataRootDir, apiId);
 
   try {
-    fs.mkdirSync(tempFolderPath, { recursive: true }); // temp folder, transactional
+    fs.mkdirSync(apiFolderPath, { recursive: true });
+
+    const configFilePath = path.join(apiFolderPath, MOCK_CONFIG_FILE_NAME);
+    const sceneFilePath = path.join(apiFolderPath, `${scene}.json`);
 
     const config = {
       path: apiPath,
@@ -47,53 +58,51 @@ const createOrUpdateMockApi = (apiId, apiPath, description, method, scene, respo
       scene,
     };
 
-    writeFile(path.join(tempFolderPath, '.config'), config);
-
-    const sceneFilePath = path.join(tempFolderPath, `${scene}.json`);
     try {
       const jsonResponse = JSON.parse(response);
       writeFile(sceneFilePath, jsonResponse);
+      writeFile(configFilePath, config);
     } catch (error) {
-      deleteFolderRecursive(tempFolderPath);
+      if (on === 'creating') {
+        deleteFolderRecursive(apiFolderPath);
+      }
       return res.status(400).json({ error: 'Invalid JSON response' });
     }
 
-    fs.mkdirSync(path.dirname(apiFolderPath), { recursive: true });
-
-    fs.renameSync(tempFolderPath, apiFolderPath);
-
-    res.json({ message: 'Mock API created successfully!', id: apiId });
+    res.json({ message: 'Mock API created/updated successfully!', id: apiId });
   } catch (error) {
-    deleteFolderRecursive(tempFolderPath);
-    console.error(error);
-    res.status(500).json({ error: 'Failed to create mock API' });
-  } finally {
-    if (fs.existsSync(cookerTempPath) && fs.readdirSync(cookerTempPath).length === 0) {
-      fs.rmdirSync(cookerTempPath);
-    }
+    console.error('Error creating/updating mock API:', error);
+    res.status(500).json({ error: 'Failed to create/update mock API' });
   }
 };
 
 router.get('/mock', (req, res) => {
   try {
-    if (!fs.existsSync(mockDataDir)) {
+    if (!fs.existsSync(mockDataRootDir)) {
       res.json([]);
       return;
     }
 
-    const mockDirs = fs.readdirSync(mockDataDir).filter((file) =>
-      fs.statSync(path.join(mockDataDir, file)).isDirectory()
-    );
+    const mockDirs = fs
+      .readdirSync(mockDataRootDir)
+      .filter((file) =>
+        fs.statSync(path.join(mockDataRootDir, file)).isDirectory()
+      );
 
-    const apis = mockDirs.map((dir) => {
-      const config = readFile(getConfigFilePath(dir));
-      if (config) {
-        const sceneFilePath = path.join(getApiFolderPath(dir), `${config.scene}.json`);
-        const sceneData = readFile(sceneFilePath);
-        return { id: dir, ...config, response: JSON.stringify(sceneData) };
-      }
-      return null;
-    }).filter(Boolean);
+    const apis = mockDirs
+      .map((dir) => {
+        const config = readFile(getConfigFilePath(dir));
+        if (config) {
+          const sceneFilePath = path.join(
+            getApiFolderPath(dir),
+            `${config.scene}.json`
+          );
+          const sceneData = readFile(sceneFilePath);
+          return { id: dir, ...config, response: JSON.stringify(sceneData) };
+        }
+        return null;
+      })
+      .filter(Boolean);
 
     res.json(apis);
   } catch (error) {
@@ -108,7 +117,16 @@ router.post('/mock', (req, res) => {
     .toString(36)
     .substring(2, 6)}`;
 
-  createOrUpdateMockApi(apiId, apiPath, description, method, scene, response, res);
+  createOrUpdateMockApi({
+    apiId,
+    apiPath,
+    description,
+    method,
+    scene,
+    response,
+    res,
+    on: 'creating',
+  });
 });
 
 router.put('/mock/:id', (req, res) => {
@@ -121,7 +139,16 @@ router.put('/mock/:id', (req, res) => {
 
   const { path: apiPath, description, method, scene, response } = req.body;
 
-  createOrUpdateMockApi(apiId, apiPath, description, method, scene, response, res);
+  createOrUpdateMockApi({
+    apiId,
+    apiPath,
+    description,
+    method,
+    scene,
+    response,
+    res,
+    on: 'updating',
+  });
 });
 
 router.delete('/mock/:id', (req, res) => {

@@ -4,12 +4,13 @@
 
 const fs = require('fs');
 const path = require('path');
+const { MOCK_DATA_ROOT_DIR_NAME } = require('../constants');
 
-function getMockDataPath() {
+function getMockDataRootPath() {
   const userProjectPath = process.env.USER_PROJECT_PATH
     ? path.resolve(process.cwd(), process.env.USER_PROJECT_PATH)
     : process.cwd();
-  return path.join(userProjectPath, process.env.MOCK_DIR_NAME);
+  return path.join(userProjectPath, MOCK_DATA_ROOT_DIR_NAME);
 }
 
 function ensureMockDataFolder(mockDataPath) {
@@ -39,7 +40,7 @@ function writeMockData(filePath, data) {
 }
 
 module.exports = {
-  getMockDataPath,
+  getMockDataRootPath,
   ensureMockDataFolder,
   readMockData,
   writeMockData,
