@@ -3,7 +3,7 @@
   "version": "0.1.2",
   "description": "The best front-end local mocking tool ever!",
   "main": "index.js",
-  "repository": "git@github.com:Alex-xd/cooker.git",
+  "repository": "git@github.com:cooker-mock/cooker-mock.git",
   "author": "boyuan <531237512@outlook.com>",
   "license": "MIT",
   "bin": {
@@ -28,7 +28,6 @@
     "dev:ui": "cd web-ui && yarn dev",
     "dev:both": "concurrently \"nodemon index.js mock\" \"yarn dev:ui\"",
     "build:ui": "cd web-ui && yarn build",
-    "format": "prettier --write \"**/*.{js,json,css,html}\"",
-    "release": "standard-version"
+    "format": "prettier --write \"**/*.{js,json,css,html}\""
   }
 }
