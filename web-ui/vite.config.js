@@ -21,7 +21,7 @@ export default defineConfig({
       },
     },
   },
-  // build: {
-  //   outDir: '../public/web-ui-dist',
-  // },
+  build: {
+    outDir: '../public/web-ui-dist',
+  },
 });

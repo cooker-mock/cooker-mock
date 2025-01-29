@@ -1,4 +1,5 @@
 # Ignore directories
+# npm package only need final build files for web-ui
 web-ui/
 docs/
 .vscode/
