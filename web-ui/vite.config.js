@@ -1,8 +1,9 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import dotenv from 'dotenv';
+import path from 'path';
 
-dotenv.config({ path: '../.env' });
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 // import { visualizer } from 'rollup-plugin-visualizer';
 
@@ -15,7 +16,7 @@ export default defineConfig({
     open: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:8088',
+        target: `http://localhost:${process.env.PORT}`,
         changeOrigin: true,
         secure: false,
       },

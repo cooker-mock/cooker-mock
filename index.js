@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-require('dotenv').config();
+require('dotenv').config({ path: __dirname + '/.env' });
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
@@ -14,7 +14,6 @@ const WEB_UI_DIST_RELATIVE_PATH = process.env.WEB_UI_DIST_RELATIVE_PATH;
 app.use(bodyParser.json());
 app.use(cors());
 
-
 const apiRoutes = require('./routes/api');
 app.use('/api', apiRoutes);
 
@@ -24,7 +23,6 @@ app.use(express.static(reactBuildPath));
 app.get('*', (req, res) => {
   res.sendFile(path.join(reactBuildPath, 'index.html'));
 });
-
 
 function startServer() {
   app.listen(PORT, () => {

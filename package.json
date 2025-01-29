@@ -40,8 +40,8 @@
     "format": "prettier --write \"**/*.{js,json,css,html}\"",
     "prepare": "cd web-ui && yarn install",
     "prepublishOnly": "yarn build:ui",
-    "release:minor": "standard-version --release-as minor",
     "release:patch": "standard-version --release-as patch",
+    "release:minor": "standard-version --release-as minor",
     "release:major": "standard-version --release-as major"
   }
 }
