@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.2](https://github.com/cooker-mock/cooker-mock/compare/v1.2.1...v1.2.2) (2025-01-29)
+
+
+### Bug Fixes
+
+* process env path fix ([1916bd5](https://github.com/cooker-mock/cooker-mock/commit/1916bd5ee279aa7c3c1063e1e29a24de315d66e7))
+
 ### [1.2.1](https://github.com/cooker-mock/cooker-mock/compare/v1.2.0...v1.2.1) (2025-01-29)
 
 
