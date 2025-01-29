@@ -14,6 +14,33 @@ const getMockDataRootPath = () => {
   return path.join(userProjectPath, MOCK_DATA_ROOT_DIR_NAME);
 };
 
+class DataHandler {
+  constructor() {
+    this.root = getMockDataRootPath(); // Get the root path of the mock data folder first, this is where all mock data files stored
+    this.ensureRootFolderExist();
+  }
+
+  ensureRootFolderExist() {
+    fs.mkdirSync(this.root, { recursive: true });
+  }
+
+  create(data) {
+    const { path, description, method, scene, response } = data;
+  }
+
+  read(where) {
+    const { id, method, path } = where;
+  }
+
+  update(where, data) {
+    const { id } = where;
+  }
+
+  delete(where) {
+    const { id } = where;
+  }
+}
+
 const ensureMockDataFolder = (mockDataPath) => {
   fs.mkdirSync(mockDataPath, { recursive: true });
 };
@@ -41,6 +68,7 @@ const writeMockData = (filePath, data) => {
 };
 
 module.exports = {
+  DataHandler,
   getMockDataRootPath,
   ensureMockDataFolder,
   readMockData,
