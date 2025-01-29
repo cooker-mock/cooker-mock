@@ -203,7 +203,7 @@ This will allow you to start the project in debug mode. You can set breakpoints 
 **Start Debugging**
 
 1. Open the debug panel in VS Code (the bug icon on the left sidebar)
-2. Select the `Debug Cooker Mock` configuration
+2. Select the `Debug and Run UI (cooker-mock)` configuration
 3. Click the green play button to start debugging
 
 
