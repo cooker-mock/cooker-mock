@@ -38,7 +38,7 @@
     "dev:both": "concurrently \"yarn dev\" \"yarn dev:ui\"",
     "build:ui": "cd web-ui && yarn build",
     "format": "prettier --write \"**/*.{js,json,css,html}\"",
-    "postinstall": "cd web-ui && yarn install",
+    "prepare": "cd web-ui && yarn install",
     "prepublishOnly": "yarn build:ui",
     "release:minor": "standard-version --release-as minor",
     "release:patch": "standard-version --release-as patch",
