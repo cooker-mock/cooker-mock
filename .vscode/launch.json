@@ -5,12 +5,28 @@
       "type": "node",
       "request": "launch",
       "name": "Debug Cooker Mock",
-      "skipFiles": ["<node_internals>/**"],
+      "runtimeExecutable": "nodemon",
+      // "runtimeArgs": ["--inspect-brk=9229"],
       "program": "${workspaceFolder}/index.js",
-      "args": ["mock"],
-      "runtimeArgs": ["--inspect-brk=9229"],
+      "env": {
+        "USER_PROJECT_PATH": "../cooker-example"
+      },
       "envFile": "${workspaceFolder}/.env",
-      "console": "integratedTerminal"
+      "console": "integratedTerminal",
+      "restart": true
+    },
+    {
+      "type": "node-terminal",
+      "request": "launch",
+      "name": "Run Web UI",
+      "command": "yarn dev:ui",
+      "cwd": "${workspaceFolder}"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Debug and Run UI",
+      "configurations": ["Debug Cooker Mock", "Run Web UI"]
     }
   ]
 }
