@@ -26,6 +26,16 @@ class DataHandler {
 
   create(data) {
     const { path, description, method, scene, response } = data;
+    const filePath = path.join(this.root, `${path.replace(/\//g, '_')}.json`);
+
+    const mockData = {
+      path,
+      description,
+      method,
+      scenes: scenes || [],
+    };
+
+    writeMockData(filePath, mockData);
   }
 
   read(where) {

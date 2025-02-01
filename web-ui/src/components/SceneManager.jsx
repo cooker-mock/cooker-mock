@@ -29,6 +29,7 @@ const SceneManager = ({ scenes, setScenes }) => {
         ? scenes.map(s => (s.name === editingScene.name ? sceneData : s))
         : [...scenes, sceneData];
       setScenes(newScenes);
+
       closeModal();
       message.success(editingScene ? 'Scene updated' : 'Scene added');
     } catch {
@@ -58,9 +59,9 @@ const SceneManager = ({ scenes, setScenes }) => {
 
   return (
     <div>
-      <h3>Scenes</h3>
+      <h3>Actions</h3>
       <Button type="primary" icon={<PlusOutlined />} onClick={() => openModal()}>
-        Add Scene
+        Create Scene
       </Button>
       <Table columns={columns} dataSource={scenes} rowKey="name" style={{ marginTop: 10 }} />
 

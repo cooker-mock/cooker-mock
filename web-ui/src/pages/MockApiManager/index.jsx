@@ -9,6 +9,7 @@ import {
   Space,
   message,
   Select,
+  Drawer,
 } from 'antd';
 import {
   PlusOutlined,
@@ -16,6 +17,8 @@ import {
   DeleteOutlined,
 } from '@ant-design/icons';
 import axios from 'axios';
+import SceneManager from '../../components/SceneManager.jsx';
+
 
 const { Option } = Select;
 
@@ -24,6 +27,9 @@ const MockApiManager = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingApi, setEditingApi] = useState(null);
   const [form] = Form.useForm();
+  const [scenes, setScenes] = useState([]);
+  const [isSceneDrawerVisible, setIsSceneDrawerVisible] = useState(false);
+
 
   useEffect(() => {
     fetchApiList();
@@ -74,6 +80,28 @@ const MockApiManager = () => {
     }
   };
 
+  const openCreateScene = (api) => {
+    if (!api) return;
+    setEditingApi(api);
+    setScenes(api.scenes || []); 
+    setIsSceneDrawerVisible(true);
+  };
+
+  useEffect(() => {
+    if (editingApi) {
+      setApiList(prevApiList =>
+        prevApiList.map(api =>
+          api.id === editingApi.id ? { ...api, scenes } : api
+        )
+      );
+    }
+  }, [scenes, editingApi]);
+
+  const closeCreateScene = () => {
+    setIsSceneDrawerVisible(false);
+    setEditingApi(null);  
+  };
+
   const closeModal = () => {
     setIsModalVisible(false);
     setEditingApi(null);
@@ -120,6 +148,13 @@ const MockApiManager = () => {
           >
             Delete
           </Button>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => openCreateScene(record)}
+          >
+            Manage scenes
+          </Button>
         </Space>
       ),
     },
@@ -140,12 +175,20 @@ const MockApiManager = () => {
 
       <Table columns={columns} dataSource={apiList} rowKey="id" />
 
-      <Modal
+      <Drawer
         title={editingApi ? 'Edit API Mock' : 'Create API Mock'}
         open={isModalVisible}
-        onCancel={closeModal}
+        onClose={closeModal}
         onOk={() => form.submit()}
         okText={editingApi ? 'Save' : 'Create'}
+        extra={
+          <Space>
+            <Button onClick={closeModal}>Cancel</Button>
+            <Button onClick={() => form.submit()} type="primary">
+            {editingApi ? 'Save' : 'Create'}
+            </Button>
+          </Space>
+        }
       >
         <Form
           form={form}
@@ -161,8 +204,6 @@ const MockApiManager = () => {
             <Input placeholder="e.g., /api/getUserName" />
           </Form.Item>
 
-
-dsffdsaafds
 
           <Form.Item
             name="description"
@@ -186,7 +227,7 @@ dsffdsaafds
             </Select>
           </Form.Item>
 
-          <Form.Item
+          {/* <Form.Item
             name="scene"
             label="Scene"
             rules={[{ required: true, message: 'Please select a default scene!' }]}
@@ -200,9 +241,17 @@ dsffdsaafds
             rules={[{ required: true, message: 'Please enter a valid JSON response!' }]}
           >
             <Input.TextArea rows={10} placeholder='e.g., {"message": "Default mock data"}' />
-          </Form.Item>
+          </Form.Item> */}
         </Form>
-      </Modal>
+      </Drawer>
+      <Drawer
+        title="Manage Scenes"
+        open={isSceneDrawerVisible}
+        onClose={closeCreateScene}
+        width={999}
+      >
+        <SceneManager scenes={scenes} setScenes={setScenes} />
+      </Drawer>
     </div >
   );
 };
