@@ -151,6 +151,26 @@ router.put('/mock/:id', (req, res) => {
   });
 });
 
+router.put('/mock/:id/scenes', (req, res) => {
+  const apiId = req.params.id;
+  const { scenes } = req.body;
+
+  const configFilePath = getConfigFilePath(apiId);
+  if (!fs.existsSync(configFilePath)) {
+    return res.status(404).json({ error: 'Api not found' });
+  }
+
+  const config = readFile(configFilePath);
+  if (!config) {
+    return res.status(500).json({ error: 'Failed to read config' });
+  }
+
+  config.scenes = scenes;
+
+  writeFile(configFilePath, config);
+  res.json({ message: 'Scenes update success' });
+});
+
 router.delete('/mock/:id', (req, res) => {
   try {
     const apiId = req.params.id;

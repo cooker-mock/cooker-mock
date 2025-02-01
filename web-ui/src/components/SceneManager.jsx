@@ -19,7 +19,7 @@ const SceneManager = ({ scenes, setScenes }) => {
     setSceneData({ name: '', response: '' });
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!sceneData.name.trim() || !sceneData.response.trim()) {
       message.error('Scene name and response cannot be empty.');
       return;
@@ -36,6 +36,7 @@ const SceneManager = ({ scenes, setScenes }) => {
       message.error('Failed to save scene.');
     }
   };
+
 
   const handleDelete = (sceneName) => {
     setScenes(scenes.filter(s => s.name !== sceneName));

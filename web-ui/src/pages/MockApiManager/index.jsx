@@ -43,7 +43,24 @@ const MockApiManager = () => {
       message.error('Failed to fetch mock APIs.');
     }
   };
-
+  const handleSaveScenes = async () => {
+    if (!editingApi) return;
+  
+    try {
+      await axios.put(`/api/mock/${editingApi.id}/scenes`, { scenes });
+      message.success('Scenes update success');
+      setApiList((prevApiList) =>
+        prevApiList.map(api =>
+          api.id === editingApi.id ? { ...api, scenes } : api
+        )
+      );
+          
+    } catch (error) {
+      
+      message.error('Failed to update scenes');
+    }
+    setIsSceneDrawerVisible(false);
+  };
   const handleCreate = async (values) => {
     try {
       if (editingApi) {
@@ -249,6 +266,11 @@ const MockApiManager = () => {
         open={isSceneDrawerVisible}
         onClose={closeCreateScene}
         width={999}
+        extra={
+          <Button type="primary" onClick={handleSaveScenes}>
+            Save Scenes
+          </Button>
+        }
       >
         <SceneManager scenes={scenes} setScenes={setScenes} />
       </Drawer>
