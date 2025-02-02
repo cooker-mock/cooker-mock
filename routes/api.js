@@ -20,7 +20,7 @@ const writeFile = (filePath, data) => {
 };
 
 const deleteFolderRecursive = (folderPath) => {
-  if (fs.existsSync) {
+  if (fs.existsSync(folderPath)) {
     fs.readdirSync(folderPath).forEach((file) => {
       const curPath = path.join(folderPath, file);
       if (fs.lstatSync(curPath).isDirectory()) {
@@ -59,7 +59,9 @@ const createOrUpdateMockApi = ({
       headers: headers || {},
       queryParams: queryParams || {},
     };
-
+    if (!config.scenes.includes(scene)) {
+      config.scenes.push(scene);
+    }
     try {
       const jsonResponse = JSON.parse(response);
       writeFile(sceneFilePath, jsonResponse);
@@ -167,26 +169,6 @@ router.get('/mock/:id/scenes', (req, res) => {
   const scenes = sceneFiles.map(file => file.replace('.json', ''));
 
   res.json({ scenes });
-});
-
-router.put('/mock/:id/scenes', (req, res) => {
-  const apiId = req.params.id;
-  const { scenes } = req.body;
-
-  const configFilePath = getConfigFilePath(apiId);
-  if (!fs.existsSync(configFilePath)) {
-    return res.status(404).json({ error: 'Api not found' });
-  }
-
-  const config = readFile(configFilePath);
-  if (!config) {
-    return res.status(500).json({ error: 'Failed to read config' });
-  }
-
-  config.scenes = scenes;
-
-  writeFile(configFilePath, config);
-  res.json({ message: 'Scenes update success' });
 });
 
 router.put('/mock/:id/scene', (req, res) => {
