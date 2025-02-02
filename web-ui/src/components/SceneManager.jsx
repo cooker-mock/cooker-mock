@@ -24,12 +24,27 @@ const SceneManager = ({ scenes, setScenes }) => {
       message.error('Scene name and response cannot be empty.');
       return;
     }
+  
+    let parsedResponse;
+    try {
+      parsedResponse = JSON.parse(sceneData.response); //in here, need to make sure it is json format
+    } catch (error) {
+      message.error('Response must be valid JSON.');
+      return;
+    }
+  
+    const newScene = {
+      name: sceneData.name,
+      response: parsedResponse, 
+    };
+  
     try {
       const newScenes = editingScene
-        ? scenes.map(s => (s.name === editingScene.name ? sceneData : s))
-        : [...scenes, sceneData];
+        ? scenes.map(s => (s.name === editingScene.name ? newScene : s))
+        : [...scenes, newScene];
+  
       setScenes(newScenes);
-
+  
       closeModal();
       message.success(editingScene ? 'Scene updated' : 'Scene added');
     } catch {

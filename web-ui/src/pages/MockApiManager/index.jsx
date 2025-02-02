@@ -45,15 +45,10 @@ const MockApiManager = () => {
   };
   const handleSaveScenes = async () => {
     if (!editingApi) return;
-  
+
     try {
       await axios.put(`/api/mock/${editingApi.id}/scenes`, { scenes });
       message.success('Scenes update success');
-      setApiList((prevApiList) =>
-        prevApiList.map(api =>
-          api.id === editingApi.id ? { ...api, scenes } : api
-        )
-      );
           
     } catch (error) {
       
@@ -244,10 +239,11 @@ const MockApiManager = () => {
             </Select>
           </Form.Item>
 
-          {/* <Form.Item
+          <Form.Item
             name="scene"
             label="Scene"
             rules={[{ required: true, message: 'Please select a default scene!' }]}
+            style={{ display: 'none' }}
           >
             <Input placeholder="e.g., default" />
           </Form.Item>
@@ -256,9 +252,10 @@ const MockApiManager = () => {
             name="response"
             label="Response"
             rules={[{ required: true, message: 'Please enter a valid JSON response!' }]}
+            style={{ display: 'none' }}
           >
             <Input.TextArea rows={10} placeholder='e.g., {"message": "Default mock data"}' />
-          </Form.Item> */}
+          </Form.Item>
         </Form>
       </Drawer>
       <Drawer
