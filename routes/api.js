@@ -51,17 +51,20 @@ const createOrUpdateMockApi = ({
     const configFilePath = path.join(apiFolderPath, MOCK_CONFIG_FILE_NAME);
     const sceneFilePath = path.join(apiFolderPath, `${scene}.json`);
 
-    const config = {
+    let config = readFile(configFilePath) || {
       path: apiPath,
       description,
       method,
+      scenes: [],
       scene,
-      headers: headers || {},
-      queryParams: queryParams || {},
+      headers: {},
+      queryParams: {},
     };
+
     if (!config.scenes.includes(scene)) {
       config.scenes.push(scene);
     }
+
     try {
       const jsonResponse = JSON.parse(response);
       writeFile(sceneFilePath, jsonResponse);

@@ -1,61 +1,81 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input, 
   Select, 
   Button, 
   Card, 
   Typography, 
-  message 
+  message,
+  Table,
+  Tag
 } from 'antd';
 
+import { useNavigate } from 'react-router-dom';
 const { Option } = Select;
 const { Title, Text } = Typography;
 
 const UserSimulation = () => {
-  const [apiUrl, setApiUrl] = useState("https://mock.api/endpoint");
+  const [apiUrl, setApiUrl] = useState("");
   const [method, setMethod] = useState("GET");
   const [requestBody, setRequestBody] = useState("");
   const [response, setResponse] = useState(null);
   const [logs, setLogs] = useState([]);
   const [mockScenario, setMockScenario] = useState("default");
+  const navigate = useNavigate();
 
   const availableScenarios = [
-    { key: "default", name: "default scene" },
-    { key: "user_admin", name: "admin scene" },
-    { key: "user_guest", name: "guest scene" },
-    { key: "error_404", name: "mock 404 error scene" },
-    { key: "error_500", name: "mock 500 error scene" }
+    { key: "default", name: "Default" },
+    { key: "user_admin", name: "Admin" },
+    { key: "user_guest", name: "Guest" },
+    { key: "error_404", name: "404 error" },
+    { key: "error_500", name: "500 error" }
   ];
+  const [headers, setHeaders] = useState("");
 
+  useEffect(() => {
+    const savedLogs = JSON.parse(localStorage.getItem("requestLogs")) || [];
+    setLogs(savedLogs);
+  }, []);
+  
+  useEffect(() => {
+    if (logs.length > 0) {
+      localStorage.setItem("requestLogs", JSON.stringify(logs));
+    }
+  }, [logs]);
   const sendRequest = async () => {
     setResponse(null);
     message.loading("Sending request...", 1);
+    let parsedHeaders = {};
+    try {
+      parsedHeaders = headers ? JSON.parse(headers) : {};
+    } catch (error) {
+      return message.error("Invalid JSON format in headers");
+    }
 
     try {
       const options = {
         method,
-        headers: { "Content-Type": "application/json", "X-Mock-Scenario": mockScenario },
+        headers: { "Content-Type": "application/json", "X-Mock-Scenario": mockScenario, ...parsedHeaders },
         ...(method !== "GET" && requestBody ? { body: requestBody } : {}),
       };
 
       const res = await fetch(apiUrl, options);
 
       const data = await res.json();
-      const responseDetails = {
+      setResponse({
         status: res.status,
         statusText: res.statusText,
         headers: Object.fromEntries(res.headers.entries()),
         body: data,
-      };
+      });
 
-      setResponse(responseDetails);
       setLogs((prevLogs) => [
         ...prevLogs,
-        {
+        { 
           method,
-          apiUrl,
-          status: res.status,
-          statusText: res.statusText,
-          scenario: mockScenario,
+          apiUrl, 
+          status: res.status, 
+          statusText: res.statusText, 
+          scenario: mockScenario, 
           time: new Date().toLocaleTimeString(),
         }
       ]);
@@ -69,6 +89,13 @@ const UserSimulation = () => {
     <div style={{ padding: 20, maxWidth: 800, margin: "auto" }}>
       <Title level={2}>User Simulation</Title>
 
+      <Button
+          type="primary"
+          onClick={() => navigate('/')}
+        >
+          Back
+        </Button>
+        
       <Card style={{ marginBottom: 16 }}>
         <Text strong>API URL:</Text>
         <Input
@@ -78,7 +105,16 @@ const UserSimulation = () => {
           style={{ marginTop: 8 }}
         />
       </Card>
-
+      <Card style={{ marginBottom: 16 }}>
+        <Text strong>Headers:</Text>
+        <Input.TextArea
+          rows={2}
+          value={headers}
+          onChange={(e) => setHeaders(e.target.value)}
+          placeholder='Enter headers in JSON format (e.g. {"Authorization": "Bearer token"})'
+          style={{ marginTop: 8 }}
+        />
+      </Card>
       <Card style={{ marginBottom: 16 }}>
         <Text strong>Method:</Text>
         <Select value={method} onChange={setMethod} style={{ width: "100%", marginTop: 8 }}>

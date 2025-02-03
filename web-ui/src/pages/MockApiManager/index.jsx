@@ -18,6 +18,7 @@ import {
 } from '@ant-design/icons';
 import axios from 'axios';
 import SceneManager from '../../components/SceneManager.jsx';
+import { useNavigate } from 'react-router-dom';
 
 
 const { Option } = Select;
@@ -29,6 +30,7 @@ const MockApiManager = () => {
   const [form] = Form.useForm();
   const [scenes, setScenes] = useState([]);
   const [isSceneDrawerVisible, setIsSceneDrawerVisible] = useState(false);
+  const navigate = useNavigate();
 
 
   useEffect(() => {
@@ -183,6 +185,14 @@ const MockApiManager = () => {
         >
           New
         </Button>
+        
+        <Button
+          type="default"
+          onClick={() => navigate('/user-simulation')}
+        >
+          User Simulation
+        </Button>
+
       </div>
 
       <Table columns={columns} dataSource={apiList} rowKey="id" />
