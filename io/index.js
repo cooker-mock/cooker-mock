@@ -204,7 +204,7 @@ class MockAPI extends IO {
    */
   static createID(path) {
     const UUID = Math.random().toString(36).substring(2, 8);
-    return `http__${path.toLowerCase().replace(/\//g, '_')}_ID_${UUID}`;
+    return `http__${path.toLowerCase().replace(/\//g, '_').slice(0, 10)}_ID_${UUID}`;
   }
 
   constructor(apiId) {
