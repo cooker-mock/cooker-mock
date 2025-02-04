@@ -118,6 +118,27 @@ router.get('/mock', (req, res) => {
   }
 });
 
+router.get('/mock/:id', (req, res) => { 
+  const apiId = decodeURIComponent(req.params.id);
+  console.log('Requested API ID:', apiId);
+
+  const apiFolderPath = getApiFolderPath(apiId);
+  if (!fs.existsSync(apiFolderPath)) {
+    return res.status(404).json({ error: 'Mock API not found' });
+  }
+
+  const config = readFile(getConfigFilePath(apiId));
+  if (!config) {
+    return res.status(500).json({ error: 'Failed to read config' });
+  }
+
+  const sceneFilePath = path.join(apiFolderPath, `${config.scene}.json`);
+  const sceneData = readFile(sceneFilePath);
+
+  res.json({ id: apiId, ...config, response: JSON.stringify(sceneData) });
+});
+
+
 router.post('/mock', (req, res) => {
   const { path: apiPath, description, method, scene, response } = req.body;
   const apiId = `http__${apiPath.replace(/\//g, '.')}_ID_${Math.random()
@@ -137,7 +158,7 @@ router.post('/mock', (req, res) => {
 });
 
 router.put('/mock/:id', (req, res) => {
-  const apiId = req.params.id;
+  const apiId = decodeURIComponent(req.params.id); 
   const configFilePath = getConfigFilePath(apiId);
 
   if (!fs.existsSync(configFilePath)) {

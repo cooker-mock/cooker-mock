@@ -86,12 +86,29 @@ const MockApiManager = () => {
     }
   };
 
-  const openModal = (api) => {
+  const fetchMockApiById = async (id) => {
+    try {
+      const response = await axios.get(`/api/mock/${id}`);
+      console.log('Fetched API:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching API:', error);
+      message.error('Failed to fetch API details.');
+      return null;
+    }
+  };
+
+  const openModal = async(api) => {
     setEditingApi(api);
     setIsModalVisible(true);
     if (api) {
-      form.setFieldsValue(api);
+    const latestApi = await fetchMockApiById(api.id); 
+    if (latestApi) {
+      form.setFieldsValue(latestApi); 
     }
+  } else {
+    form.resetFields(); 
+  }
   };
 
   const openCreateScene = (api) => {
@@ -178,20 +195,19 @@ const MockApiManager = () => {
     <div style={{ padding: 20 }}>
       <div style={{ marginBottom: 20, display: 'flex', justifyContent: 'space-between' }}>
         <h2>Mock API Manager</h2>
+        <div><Button
+          type="default"
+          onClick={() => navigate('/user-simulation')}
+        >
+          User Simulation
+        </Button>
         <Button
           type="primary"
           icon={<PlusOutlined />}
           onClick={() => openModal(null)}
         >
           New
-        </Button>
-        
-        <Button
-          type="default"
-          onClick={() => navigate('/user-simulation')}
-        >
-          User Simulation
-        </Button>
+        </Button></div>
 
       </div>
 
