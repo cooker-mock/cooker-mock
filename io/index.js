@@ -273,7 +273,10 @@ class MockAPI extends IO {
   get sceneList() {
     return fs
       .readdirSync(this.folderPath)
-      .filter((file) => fs.statSync(path.join(this.folderPath, file)).isFile())
+      .filter(
+        (file) =>
+          fs.statSync(path.join(this.folderPath, file)).isFile() && file !== MOCK_CONFIG_FILE_NAME
+      )
       .map((file) => path.parse(file).name);
   }
 
