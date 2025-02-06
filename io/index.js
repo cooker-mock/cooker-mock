@@ -260,6 +260,16 @@ class MockAPI extends IO {
   }
 
   /**
+   * Get scene file path by scene name
+   * @param {string} scene
+   * @returns {string}
+   */
+  getSceneFilePath(scene) {
+    return path.join(this.folderPath, `${scene}.json`);
+  }
+ 
+
+  /**
    *
    * @param {string} data
    */
@@ -268,20 +278,21 @@ class MockAPI extends IO {
   }
 
   /**
+   * set scene file with assgined path
+   * @param {string} scene
+   * @param {string} data
+   */
+  setScene(scene, data) {
+    this.writeFile(this.getSceneFilePath(scene), data);
+  }
+  /**
    * @returns {string[]} return all scene names in the folder
    */
   get sceneList() {
     return fs
       .readdirSync(this.folderPath)
-      .filter(
-        (file) =>
-          fs.statSync(path.join(this.folderPath, file)).isFile() && file !== MOCK_CONFIG_FILE_NAME
-      )
+      .filter((file) => fs.statSync(path.join(this.folderPath, file)).isFile())
       .map((file) => path.parse(file).name);
-  }
-
-  getSceneFilePath(scene) {
-    return path.join(this.folderPath, `${scene}.json`);
   }
 
   /**
@@ -319,8 +330,37 @@ class MockAPI extends IO {
   }
 }
 
+class Scene extends IO {
+  constructor(apiId, scene) {
+    super();
+    this.apiId = apiId;
+    //this.scene = scene;
+    this.folderPath = path.join(this.root, apiId);
+    this.sceneFilePath = path.join(this.folderPath, `${scene}.json`);
+    this.ensureSceneFolderExist();
+  }
+
+  ensureSceneFolderExist() {
+    fs.mkdirSync(this.folderPath, { recursive: true });
+  }
+
+  getScene() {
+    return this.readFile(this.sceneFilePath);
+  }
+
+  setScene(data) {
+    this.writeFile(this.sceneFilePath, data);
+  }
+
+  delete() {
+    this.deleteFile(this.sceneFilePath);
+    return this;
+  }
+}
+
 module.exports = {
   FileIO,
   IO,
   MockAPI,
+  Scene,
 };

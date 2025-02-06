@@ -1,14 +1,11 @@
 const express = require('express');
+const scenesController = require('../controllers/scenes');
+
 const router = express.Router();
 
-// Example Code:
-// router.get('/mock/:id', (req, res) => {
-//   const apiId = req.params.id;
-//   const configFilePath = getConfigFilePath(apiId);
-
-//   if (!fs.existsSync(configFilePath)) {
-//     return res.status(404).json({ error: 'Mock API not found' });
-//   }
-// });
+router.get('/:apiId/:scene', scenesController.getSceneData);
+router.post('/:apiId', scenesController.createScene);
+//router.put('/:apiId/:scene', scenesController.updateScene);
+//router.delete('/:apiId/:scene', scenesController.deleteScene);
 
 module.exports = router;

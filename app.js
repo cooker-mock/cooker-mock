@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const config = require('./config');
 const mockApis = require('./routes/mockApis');
-// const scenes = require('./routes/scenes');
+const scenes = require('./routes/scenes');
 
 const app = express();
 
@@ -14,7 +14,7 @@ app.use(cors());
 
 // Restful API Routes
 app.use('/v1/mock-apis', mockApis);
-// app.use('/v1/scenes', scenes);
+app.use('/v1/scenes', scenes);
 
 // Static files Routes
 app.use(express.static(path.join(__dirname, 'public')));
