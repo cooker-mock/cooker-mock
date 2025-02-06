@@ -1,7 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, Input, Form, Tag, Space, message, Select } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import {
+  Table,
+  Button,
+  Modal,
+  Input,
+  Form,
+  Tag,
+  Space,
+  message,
+  Select,
+  Drawer,
+} from 'antd';
+import {
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined,
+} from '@ant-design/icons';
 import axios from 'axios';
+import SceneManager from '../../components/SceneManager.jsx';
+import { useNavigate } from 'react-router-dom';
+
 
 const { Option } = Select;
 
@@ -10,6 +28,10 @@ const MockApiManager = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingApi, setEditingApi] = useState(null);
   const [form] = Form.useForm();
+  const [scenes, setScenes] = useState([]);
+  const [isSceneDrawerVisible, setIsSceneDrawerVisible] = useState(false);
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     fetchApiList();
@@ -23,7 +45,19 @@ const MockApiManager = () => {
       message.error('Failed to fetch mock APIs.');
     }
   };
+  const handleSaveScenes = async () => {
+    if (!editingApi) return;
 
+    try {
+      await axios.put(`/api/mock/${editingApi.id}/scenes`, { scenes });
+      message.success('Scenes update success');
+          
+    } catch (error) {
+      
+      message.error('Failed to update scenes');
+    }
+    setIsSceneDrawerVisible(false);
+  };
   const handleCreate = async (values) => {
     try {
       if (editingApi) {
@@ -52,12 +86,51 @@ const MockApiManager = () => {
     }
   };
 
-  const openModal = (api) => {
+  const fetchMockApiById = async (id) => {
+    try {
+      const response = await axios.get(`/api/mock/${id}`);
+      console.log('Fetched API:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching API:', error);
+      message.error('Failed to fetch API details.');
+      return null;
+    }
+  };
+
+  const openModal = async(api) => {
     setEditingApi(api);
     setIsModalVisible(true);
     if (api) {
-      form.setFieldsValue(api);
+    const latestApi = await fetchMockApiById(api.id); 
+    if (latestApi) {
+      form.setFieldsValue(latestApi); 
     }
+  } else {
+    form.resetFields(); 
+  }
+  };
+
+  const openCreateScene = (api) => {
+    if (!api) return;
+    setEditingApi(api);
+    setScenes(api.scenes || []); 
+    setIsSceneDrawerVisible(true);
+  };
+
+  useEffect(() => {
+    if (editingApi) {
+      setApiList(prevApiList =>
+        prevApiList.map(api =>
+          api.id === editingApi.id ? { ...api, scenes } : api
+        )
+      );
+    }
+  }, [scenes, editingApi]);
+
+  const closeCreateScene = () => {
+    setIsSceneDrawerVisible(false);
+    setEditingApi(null);  
   };
 
   const closeModal = () => {
@@ -99,6 +172,13 @@ const MockApiManager = () => {
           <Button icon={<DeleteOutlined />} danger onClick={() => handleDelete(record.id)}>
             Delete
           </Button>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => openCreateScene(record)}
+          >
+            Manage scenes
+          </Button>
         </Space>
       ),
     },
@@ -108,19 +188,38 @@ const MockApiManager = () => {
     <div style={{ padding: 20 }}>
       <div style={{ marginBottom: 20, display: 'flex', justifyContent: 'space-between' }}>
         <h2>Mock API Manager</h2>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => openModal(null)}>
-          New
+        <div><Button
+          type="default"
+          onClick={() => navigate('/user-simulation')}
+        >
+          User Simulation
         </Button>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={() => openModal(null)}
+        >
+          New
+        </Button></div>
+
       </div>
 
       <Table columns={columns} dataSource={apiList} rowKey="id" />
 
-      <Modal
+      <Drawer
         title={editingApi ? 'Edit API Mock' : 'Create API Mock'}
         open={isModalVisible}
-        onCancel={closeModal}
+        onClose={closeModal}
         onOk={() => form.submit()}
         okText={editingApi ? 'Save' : 'Create'}
+        extra={
+          <Space>
+            <Button onClick={closeModal}>Cancel</Button>
+            <Button onClick={() => form.submit()} type="primary">
+            {editingApi ? 'Save' : 'Create'}
+            </Button>
+          </Space>
+        }
       >
         <Form
           form={form}
@@ -168,6 +267,7 @@ const MockApiManager = () => {
             name="scene"
             label="Scene"
             rules={[{ required: true, message: 'Please select a default scene!' }]}
+            style={{ display: 'none' }}
           >
             <Input placeholder="e.g., default" />
           </Form.Item>
@@ -176,12 +276,26 @@ const MockApiManager = () => {
             name="response"
             label="Response"
             rules={[{ required: true, message: 'Please enter a valid JSON response!' }]}
+            style={{ display: 'none' }}
           >
             <Input.TextArea rows={10} placeholder='e.g., {"message": "Default mock data"}' />
           </Form.Item>
         </Form>
-      </Modal>
-    </div>
+      </Drawer>
+      <Drawer
+        title="Manage Scenes"
+        open={isSceneDrawerVisible}
+        onClose={closeCreateScene}
+        width={999}
+        extra={
+          <Button type="primary" onClick={handleSaveScenes}>
+            Save Scenes
+          </Button>
+        }
+      >
+        <SceneManager scenes={scenes} setScenes={setScenes} />
+      </Drawer>
+    </div >
   );
 };
 
