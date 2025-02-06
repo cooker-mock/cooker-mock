@@ -39,7 +39,7 @@ const MockApiManager = () => {
 
   const fetchApiList = async () => {
     try {
-      const response = await axios.get('/api/mock');
+      const response = await axios.get('/v1/mock-apis/with-scene');
       setApiList(response.data);
     } catch (error) {
       message.error('Failed to fetch mock APIs.');
@@ -61,10 +61,10 @@ const MockApiManager = () => {
   const handleCreate = async (values) => {
     try {
       if (editingApi) {
-        await axios.put(`/api/mock/${editingApi.id}`, values);
+        await axios.put(`/v1/mock-apis/with-scene/${editingApi.id}`, values);
         message.success('Mock API updated successfully!');
       } else {
-        await axios.post('/api/mock', values);
+        await axios.post('/v1/mock-apis', values);
         message.success('Mock API created successfully!');
       }
       fetchApiList();
@@ -78,7 +78,7 @@ const MockApiManager = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`/api/mock/${id}`);
+      await axios.delete(`/v1/mock-apis/${id}`);
       message.success('Mock API deleted successfully!');
       fetchApiList();
     } catch (error) {
@@ -166,17 +166,10 @@ const MockApiManager = () => {
       key: 'actions',
       render: (text, record) => (
         <Space size="middle">
-          <Button
-            icon={<EditOutlined />}
-            onClick={() => openModal(record)}
-          >
+          <Button icon={<EditOutlined />} onClick={() => openModal(record)}>
             Edit
           </Button>
-          <Button
-            icon={<DeleteOutlined />}
-            danger
-            onClick={() => handleDelete(record.id)}
-          >
+          <Button icon={<DeleteOutlined />} danger onClick={() => handleDelete(record.id)}>
             Delete
           </Button>
           <Button
@@ -232,7 +225,13 @@ const MockApiManager = () => {
           form={form}
           layout="vertical"
           onFinish={handleCreate}
-          initialValues={{ method: 'ALL', path: '/api/getUserName', scene: 'default', description: 'Get user name', response: '{"message": "1111Default mock data"}' }}
+          initialValues={{
+            method: 'ALL',
+            path: '/api/getUserName',
+            scene: 'default',
+            description: 'Get user name',
+            response: '{"message": "1111Default mock data"}',
+          }}
         >
           <Form.Item
             name="path"
@@ -241,7 +240,6 @@ const MockApiManager = () => {
           >
             <Input placeholder="e.g., /api/getUserName" />
           </Form.Item>
-
 
           <Form.Item
             name="description"

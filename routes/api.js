@@ -1,3 +1,6 @@
+/**
+ * @deprecated 文件已废弃，请转移致mockApis.js
+ */
 const express = require('express');
 const router = express.Router();
 const path = require('path');
@@ -7,8 +10,7 @@ const { MOCK_CONFIG_FILE_NAME } = require('../constants');
 
 const mockDataRootDir = dataHandler.getMockDataRootPath();
 const getApiFolderPath = (apiId) => path.join(mockDataRootDir, apiId);
-const getConfigFilePath = (apiId) =>
-  path.join(getApiFolderPath(apiId), '.config');
+const getConfigFilePath = (apiId) => path.join(getApiFolderPath(apiId), '.config');
 
 const readFile = (filePath) => {
   if (!fs.existsSync(filePath)) return null;
@@ -29,7 +31,7 @@ const deleteFolderRecursive = (folderPath) => {
         fs.unlinkSync(curPath);
       }
     });
-    fs.rmdirSync(folderPath);
+    fs.rmSync(folderPath);
   }
 };
 
@@ -92,18 +94,13 @@ router.get('/mock', (req, res) => {
 
     const mockDirs = fs
       .readdirSync(mockDataRootDir)
-      .filter((file) =>
-        fs.statSync(path.join(mockDataRootDir, file)).isDirectory()
-      );
+      .filter((file) => fs.statSync(path.join(mockDataRootDir, file)).isDirectory());
 
     const apis = mockDirs
       .map((dir) => {
         const config = readFile(getConfigFilePath(dir));
         if (config) {
-          const sceneFilePath = path.join(
-            getApiFolderPath(dir),
-            `${config.scene}.json`
-          );
+          const sceneFilePath = path.join(getApiFolderPath(dir), `${config.scene}.json`);
           const sceneData = readFile(sceneFilePath);
           return { id: dir, ...config, response: JSON.stringify(sceneData) };
         }
