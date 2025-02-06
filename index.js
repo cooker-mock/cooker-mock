@@ -5,9 +5,7 @@ const config = require('./config');
 
 function startServer() {
   app.listen(config.PORT, () => {
-    console.log(
-      `Cooker Mock Server running at http://localhost:${config.PORT}`
-    );
+    console.log(`Cooker Mock Server running at http://localhost:${config.PORT}`);
   });
 }
 
