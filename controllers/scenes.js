@@ -30,7 +30,11 @@ exports.createScene = async (req, res) => {
         scene,
         response,
       });
-      res.json(result);
+      res.status(201).json({
+                message: 'Mock API scene created successfully!',
+                apiId,
+                scene,
+      });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Failed to create scene.' });

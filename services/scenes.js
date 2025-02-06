@@ -16,7 +16,7 @@ const createScene = (apiId, data) => {
     
     if (scene) {
       try {
-        sceneInstance.scene(response);
+        sceneInstance.setScene(response);
       } catch (error) {
         console.error('Failed to create mock API scene', error);
         throw error;
