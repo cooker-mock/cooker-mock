@@ -255,6 +255,10 @@ class MockAPI extends IO {
     return path.join(this.folderPath, `${this.config.scene}.json`);
   }
 
+  /**
+   * Get current scene data
+   * @returns {string}
+   */
   get scene() {
     return this.readFile(this.sceneFilePath);
   }
@@ -267,10 +271,9 @@ class MockAPI extends IO {
   getSceneFilePath(scene) {
     return path.join(this.folderPath, `${scene}.json`);
   }
- 
 
   /**
-   *
+   * Set input data to current scene file
    * @param {string} data
    */
   set scene(data) {
@@ -343,15 +346,26 @@ class Scene extends IO {
   ensureSceneFolderExist() {
     fs.mkdirSync(this.folderPath, { recursive: true });
   }
-
+  /**
+   * get current scene data
+   * @returns {string} return scene data, return null if file not exist
+   */
   getScene() {
     return this.readFile(this.sceneFilePath);
   }
 
+  /**
+   * set scene data to current scene file
+   * @param {string} data
+   */
   setScene(data) {
     this.writeFile(this.sceneFilePath, data);
+    return this;
   }
 
+  /**
+   * delete current scene file
+   */
   delete() {
     this.deleteFile(this.sceneFilePath);
     return this;
