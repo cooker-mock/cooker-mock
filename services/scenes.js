@@ -30,7 +30,12 @@ const getSceneData = (apiId, scene) => {
     return sceneInstance.getScene();
 };
 
+const deleteScene = (apiId, scene) => {
+    const sceneInstance = new Scene(apiId, scene);
+    return sceneInstance.delete();
+};
 module.exports = {
     createScene,
     getSceneData,
+    deleteScene,
 };

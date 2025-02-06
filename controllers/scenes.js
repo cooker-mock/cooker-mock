@@ -55,15 +55,15 @@ exports.updateScene = async (req, res) => {
       res.status(500).json({ error: 'Failed to update scene.' });
     }
 };
+*/
 exports.deleteScene = async (req, res) => {
     try {
       const { apiId, scene } = req.params;
       
-      const result = services.scenes.deleteScene(apiId, scene);
+      services.scenes.deleteScene(apiId, scene);
       res.json({ message: 'Mock API scene deleted successfully!', apiId, scene });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Failed to delete scene.' });   
     }
 };
-*/
