@@ -9,8 +9,9 @@ const services = require('../services');
  * Get Scene Data by API ID and Scene Name
  */
 exports.getSceneData = async (req, res) => {
-  try {G
-    const result = services.scenes.getSceneData();
+  try {
+    const { apiId, scene } = req.params;
+    const result = services.scenes.getSceneData(apiId, scene);
     res.json(result);
   } catch (error) {
     console.error(error);
@@ -33,10 +34,36 @@ exports.createScene = async (req, res) => {
       res.status(201).json({
                 message: 'Mock API scene created successfully!',
                 apiId,
-                scene,
-      });
+                scene,});
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Failed to create scene.' });
     }
-  };
+};
+/*
+exports.updateScene = async (req, res) => {
+    try {
+      const { apiId, scene } = req.params;
+      const { response } = req.body;
+      
+      const result = services.scenes.updateScene(apiId, scene, {
+        response,
+      });
+      res.json({ message: 'Mock API scene updated successfully!', apiId, scene });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Failed to update scene.' });
+    }
+};
+exports.deleteScene = async (req, res) => {
+    try {
+      const { apiId, scene } = req.params;
+      
+      const result = services.scenes.deleteScene(apiId, scene);
+      res.json({ message: 'Mock API scene deleted successfully!', apiId, scene });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Failed to delete scene.' });   
+    }
+};
+*/

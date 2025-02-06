@@ -25,6 +25,12 @@ const createScene = (apiId, data) => {
     return sceneInstance;
   };
 
+const getSceneData = (apiId, scene) => {
+    const sceneInstance = new Scene(apiId, scene);
+    return sceneInstance.getScene();
+};
+
 module.exports = {
     createScene,
+    getSceneData,
 };
