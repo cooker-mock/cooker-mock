@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Table, Button, Input, Modal, Space, message } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import PropTypes from 'prop-types';
 
 const SceneManager = ({ scenes, setScenes }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -102,6 +103,11 @@ const SceneManager = ({ scenes, setScenes }) => {
       </Modal>
     </div>
   );
+  
 };
 
 export default SceneManager;
+SceneManager.propTypes = {
+  scenes: PropTypes.array.isRequired,  
+  setScenes: PropTypes.func.isRequired   
+};
