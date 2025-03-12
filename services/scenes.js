@@ -1,8 +1,4 @@
-const path = require('path');
-const fs = require('fs');
-const { IO, Scene } = require('../io');
-
-const io = new IO();
+const { Scene } = require('../io');
 
 /**
  * create a new scene for a mock API

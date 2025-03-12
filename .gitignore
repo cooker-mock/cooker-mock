@@ -21,3 +21,5 @@ public/web-ui-dist/
 # docs
 docs/.vitepress/dist
 docs/.vitepress/cache
+
+.env

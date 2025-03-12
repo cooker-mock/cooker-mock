@@ -4,7 +4,7 @@
 
   const fetchMockApis = async () => {
     try {
-      const response = await fetch('http://localhost:8088/api/mock');
+      const response = await fetch('http://localhost:8088/v1/mock-apis/with-scene');
       mockApis = await response.json();
       console.log('Fetched mock APIs:', mockApis);
     } catch (error) {

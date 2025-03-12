@@ -33,8 +33,8 @@ exports.createScene = async (req, res) => {
     });
     res.status(201).json({
       message: 'Mock API scene created successfully!',
-      apiId,
-      scene,
+      apiId: result.apiId,
+      scene: result.scene,
     });
   } catch (error) {
     console.error(error);
@@ -50,7 +50,11 @@ exports.updateScene = async (req, res) => {
     const { response } = req.body;
 
     const result = services.scenes.updateScene(apiId, scene, response);
-    res.json({ message: 'Mock API scene updated successfully!', apiId, scene });
+    res.json({
+      message: 'Mock API scene updated successfully!',
+      apiId: result.apiId,
+      scene: result.scene,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to update scene.' });

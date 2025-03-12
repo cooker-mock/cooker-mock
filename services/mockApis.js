@@ -1,6 +1,4 @@
-const path = require('path');
-const fs = require('fs');
-const { IO, MockAPI } = require('../io');
+const { IO, MockAPI, Scene } = require('../io');
 
 const io = new IO();
 
@@ -19,23 +17,34 @@ const getMockApiInstances = (apiIds) => {
  */
 const getMockApis = (config) => {
   const { withResponse } = config || {};
-  const allApis = io.getAllApis();
-  const result = getMockApiInstances(allApis)
+
+  // Get all APIs and their modification times
+  const apisWithModTime = io.getAllApisWithModTime();
+
+  // Sort by modification time in descending order
+  apisWithModTime.sort((a, b) => b.lastModified - a.lastModified);
+
+  // Get the sorted API ID list
+  const sortedApiIds = apisWithModTime.map((api) => api.id);
+
+  const result = getMockApiInstances(sortedApiIds)
     .map((mockApi) => {
       const config = mockApi.config;
       if (config) {
         const sceneList = mockApi.sceneList;
         let response = null;
         if (withResponse) {
-          response = mockApi.scene;
+          const sceneInstance = new Scene(mockApi.id, config.scene);
+          response = sceneInstance.getScene();
         }
 
-        // add ID, assemble data
+        // Add ID, modification time, and other data
         return {
           id: mockApi.id,
           ...config,
           sceneList,
           response,
+          lastModified: io.getApiLastModified(mockApi.id).toISOString(),
         };
       }
       return null;
@@ -69,17 +78,6 @@ const updateMockApi = (apiId, data) => {
     throw error;
   }
   return mockApi;
-};
-
-/**
- * @deprecated 即将废弃
- * @param {string} apiId
- * @param {Object} data
- * @returns {MockAPI}
- */
-const updateMockApiWithScene = (apiId, data) => {
-  const mockApi = updateMockApi(apiId, data);
-  return mockApi.setScene(mockApi.config.scene, data.response);
 };
 
 /**
@@ -139,6 +137,5 @@ module.exports = {
   getMockApiInstances,
   createMockApi,
   updateMockApi,
-  updateMockApiWithScene,
   deleteMockApi,
 };
