@@ -1,6 +1,6 @@
 {
   "name": "cooker-mock",
-  "version": "1.2.2",
+  "version": "1.4.0",
   "description": "The best front-end local mocking tool ever!",
   "main": "index.js",
   "repository": "git@github.com:cooker-mock/cooker-mock.git",
@@ -20,8 +20,8 @@
   "dependencies": {
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "openai": "^4.87.3",
     "uuidv4": "^6.2.13"
   },
   "devDependencies": {
@@ -29,11 +29,12 @@
     "cross-env": "^7.0.3",
     "nodemon": "^3.1.9",
     "prettier": "^3.4.2",
-    "standard-version": "^9.5.0"
+    "standard-version": "^9.5.0",
+    "vitepress": "^1.6.3"
   },
   "scripts": {
     "start": "node index.js",
-    "dev": "cross-env USER_PROJECT_PATH=../cooker-example nodemon index.js",
+    "dev": "cross-env NODE_ENV=development nodemon index.js",
     "dev:ui": "cd web-ui && yarn dev",
     "dev:both": "concurrently \"yarn dev\" \"yarn dev:ui\"",
     "build:ui": "cd web-ui && yarn build",
@@ -41,7 +42,9 @@
     "prepare": "cd web-ui && yarn install",
     "prepublishOnly": "yarn build:ui",
     "release:patch": "standard-version --release-as patch",
-    "release:minor": "standard-version --release-as minor",
-    "release:major": "standard-version --release-as major"
+    "release:major": "standard-version --release-as major",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   }
 }

@@ -1,9 +1,5 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
-import dotenv from 'dotenv';
-import path from 'path';
-
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 // import { visualizer } from 'rollup-plugin-visualizer';
 
@@ -12,11 +8,11 @@ export default defineConfig({
   root: './',
   plugins: [react() /* , visualizer({ open: true }) */],
   server: {
-    port: process.env.WEB_UI_PORT,
+    port: 9088,
     open: true,
     proxy: {
-      '/api': {
-        target: `http://localhost:${process.env.PORT}`,
+      '/v1': {
+        target: 'http://localhost:8088',
         changeOrigin: true,
         secure: false,
       },
@@ -24,5 +20,13 @@ export default defineConfig({
   },
   build: {
     outDir: '../public/web-ui-dist',
+  },
+  css: {
+    preprocessorOptions: {
+      less: {
+        javascriptEnabled: true,
+        additionalData: '@root-entry-name: default;',
+      },
+    },
   },
 });

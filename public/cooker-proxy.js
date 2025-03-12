@@ -4,7 +4,7 @@
 
   const fetchMockApis = async () => {
     try {
-      const response = await fetch('http://localhost:8088/api/mock');
+      const response = await fetch('http://localhost:8088/v1/mock-apis/with-scene');
       mockApis = await response.json();
       console.log('Fetched mock APIs:', mockApis);
     } catch (error) {
@@ -17,15 +17,12 @@
     return mockApis.find((api) => {
       const mockApiUrlObj = new URL(api.path, urlObj.origin);
       const methodMatched =
-        api.method.toUpperCase() === method.toUpperCase() ||
-        api.method.toUpperCase() === 'ALL';
+        api.method.toUpperCase() === method.toUpperCase() || api.method.toUpperCase() === 'ALL';
       const pathnameMatched = urlObj.pathname === mockApiUrlObj.pathname;
-      const searchParamsMatched = [...mockApiUrlObj.searchParams].every(
-        ([key, value]) => {
-          const actualValue = urlObj.searchParams.get(key);
-          return value === '*' || actualValue === value; // * support, any value in query param
-        }
-      );
+      const searchParamsMatched = [...mockApiUrlObj.searchParams].every(([key, value]) => {
+        const actualValue = urlObj.searchParams.get(key);
+        return value === '*' || actualValue === value; // * support, any value in query param
+      });
       return methodMatched && pathnameMatched && searchParamsMatched;
     });
   };

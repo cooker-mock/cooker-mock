@@ -1,0 +1,66 @@
+.api-card {
+  margin-bottom: 15px;
+  border-radius: 8px;
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+  }
+}
+
+.scene-button {
+  &:hover {
+    .delete-button,
+    .edit-button {
+      display: inline-flex;
+    }
+  }
+}
+
+.delete-button {
+  display: none;
+
+  &-oulined {
+    display: inline-flex;
+  }
+
+  &-filled {
+    display: none;
+  }
+
+  &:hover {
+    .delete-button {
+      &-filled {
+        display: inline-flex;
+      }
+
+      &-oulined {
+        display: none;
+      }
+    }
+  }
+}
+
+.edit-button {
+  display: none;
+
+  &-oulined {
+    display: inline-flex;
+  }
+
+  &-filled {
+    display: none;
+  }
+
+  &:hover {
+    .edit-button {
+      &-filled {
+        display: inline-flex;
+      }
+
+      &-oulined {
+        display: none;
+      }
+    }
+  }
+}

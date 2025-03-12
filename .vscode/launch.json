@@ -9,7 +9,7 @@
       // "runtimeArgs": ["--inspect-brk=9229"],
       "program": "${workspaceFolder}/index.js",
       "env": {
-        "USER_PROJECT_PATH": "../cooker-example"
+        "NODE_ENV": "development"
       },
       "envFile": "${workspaceFolder}/.env",
       "console": "integratedTerminal",

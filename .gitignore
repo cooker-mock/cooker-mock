@@ -17,3 +17,9 @@ public/web-ui-dist/
 *.swo
 *.lock
 .idea/
+
+# docs
+docs/.vitepress/dist
+docs/.vitepress/cache
+
+.env
