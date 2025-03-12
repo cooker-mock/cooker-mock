@@ -21,4 +21,12 @@ export default defineConfig({
   build: {
     outDir: '../public/web-ui-dist',
   },
+  css: {
+    preprocessorOptions: {
+      less: {
+        javascriptEnabled: true,
+        additionalData: '@root-entry-name: default;',
+      },
+    },
+  },
 });
