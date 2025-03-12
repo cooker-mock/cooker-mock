@@ -15,19 +15,6 @@ const getMockDataRootPath = () => {
 };
 
 /**
- * @param {string} uuid
- */
-// const getApiIdbyUUID = (uuid) => {
-//   const dirs = fs.readdirSync(getMockDataRootPath());
-//   for (const dir of dirs) {
-//     const match = dir.match(/ID_([\w\d]+)$/);
-//     if (match && match[1] === uuid) {
-//       return dir;
-//     }
-//   }
-// };
-
-/**
  * FileIO base class
  */
 class FileIO {
@@ -89,14 +76,16 @@ class FileIO {
    */
   writeJSONFile(filePath, data) {
     try {
-      let content;
+      let content = data;
       try {
-        content = JSON.stringify(data, null, 2);
+        if (typeof data === 'string') {
+          content = JSON.parse(data);
+        }
       } catch (error) {
         console.error(`Failed to serialize data to JSON:`, error);
         throw error;
       }
-      fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
+      fs.writeFileSync(filePath, JSON.stringify(content, null, 2), 'utf8');
     } catch (error) {
       console.error(`Error writing file ${filePath}:`, error);
       throw error;
@@ -148,6 +137,18 @@ class IO extends FileIO {
 
   ensureRootFolderExist() {
     fs.mkdirSync(this.root, { recursive: true });
+
+    if (!fs.existsSync(path.join(this.root, '.env'))) {
+      fs.writeFileSync(path.join(this.root, '.env'), `OPENAI_API_KEY=`, 'utf8');
+    }
+
+    if (!fs.existsSync(path.join(this.root, '.gitignore'))) {
+      fs.writeFileSync(path.join(this.root, '.gitignore'), `.env`, 'utf8');
+    }
+
+    if (!fs.existsSync(path.join(this.root, '.npmignore'))) {
+      fs.writeFileSync(path.join(this.root, '.npmignore'), `.env`, 'utf8');
+    }
   }
 
   /**
@@ -165,31 +166,64 @@ class IO extends FileIO {
   }
 
   /**
-   * @deprecated
+   * Get the last modified time of an API
+   * @param {string} apiId API's ID
+   * @returns {Date} last modified time
    */
-  getApiFolderPath(apiId) {
-    return path.join(this.root, apiId);
+  getApiLastModified(apiId) {
+    const apiPath = path.join(this.root, apiId);
+    if (!fs.existsSync(apiPath)) {
+      return new Date(0);
+    }
+
+    try {
+      const stat = fs.statSync(apiPath);
+      return stat.mtime;
+    } catch (error) {
+      console.error(`Failed to get modification time for API ${apiId}:`, error);
+      return new Date(0);
+    }
   }
 
   /**
-   * @deprecated
+   * Get all APIs and their modification times
+   * @returns {Array<{id: string, lastModified: Date}>} API list and modification times
    */
-  getApiConfig(apiId) {
-    return this.readJSONFile(this.getApiConfigFilePath(apiId));
+  getAllApisWithModTime() {
+    const apiIds = this.getAllApis();
+
+    return apiIds.map((apiId) => ({
+      id: apiId,
+      lastModified: this.getApiLastModified(apiId),
+    }));
   }
 
   /**
-   * @deprecated
+   * Get the OpenAI API key from the .env file
+   * @returns {string} OpenAI API key
    */
-  getApiConfigFilePath(apiId) {
-    return path.join(this.getApiFolderPath(apiId), MOCK_CONFIG_FILE_NAME);
-  }
+  getOpenAIAPIKey() {
+    try {
+      const envFilePath = path.join(this.root, '.env');
 
-  /**
-   * @deprecated
-   */
-  getReturnSceneFilePath(apiId, scene) {
-    return path.join(this.getApiFolderPath(apiId), `${scene}.json`);
+      if (!fs.existsSync(envFilePath)) {
+        console.warn('No .env file found in project root');
+        return null;
+      }
+
+      const envContent = fs.readFileSync(envFilePath, 'utf8');
+
+      const match = envContent.match(/OPENAI_API_KEY=([^\r\n]+)/);
+      if (match && match[1]) {
+        return match[1].trim();
+      }
+
+      console.warn('OPENAI_API_KEY not found in .env file');
+      return null;
+    } catch (error) {
+      console.error('Error reading OPENAI_API_KEY from .env file:', error);
+      return null;
+    }
   }
 }
 
@@ -225,7 +259,6 @@ class MockAPI extends IO {
   get valid() {
     const folder = fs.existsSync(this.folderPath);
     const config = fs.existsSync(this.configPath);
-    const scene = fs.existsSync(this.sceneFilePath);
 
     if (!folder) {
       console.error(`MockAPI is invalid. Folder does not exist: ${this.folderPath}`);
@@ -233,11 +266,8 @@ class MockAPI extends IO {
     if (!config) {
       console.error(`MockAPI is invalid. Config file does not exist: ${this.configPath}`);
     }
-    if (!scene) {
-      console.error(`MockAPI is invalid. Scene file does not exist: ${this.sceneFilePath}`);
-    }
 
-    return folder && config && scene;
+    return folder && config;
   }
 
   get config() {
@@ -249,78 +279,27 @@ class MockAPI extends IO {
   }
 
   /**
-   * Get current actived scene file path
-   */
-  get sceneFilePath() {
-    return path.join(this.folderPath, `${this.config.scene}.json`);
-  }
-
-  /**
-   * Get current scene data
-   * @returns {string}
-   */
-  get scene() {
-    return this.readFile(this.sceneFilePath);
-  }
-
-  /**
-   * Get scene file path by scene name
-   * @param {string} scene
-   * @returns {string}
-   */
-  getSceneFilePath(scene) {
-    return path.join(this.folderPath, `${scene}.json`);
-  }
-
-  /**
-   * Set input data to current scene file
-   * @param {string} data
-   */
-  set scene(data) {
-    this.writeFile(this.sceneFilePath, data);
-  }
-
-  /**
-   * set scene file with assgined path
-   * @param {string} scene
-   * @param {string} data
-   */
-  setScene(scene, data) {
-    this.writeFile(this.getSceneFilePath(scene), data);
-  }
-  /**
    * @returns {string[]} return all scene names in the folder
    */
   get sceneList() {
     return fs
       .readdirSync(this.folderPath)
-      .filter((file) => fs.statSync(path.join(this.folderPath, file)).isFile())
+      .filter(
+        (file) =>
+          fs.statSync(path.join(this.folderPath, file)).isFile() && file !== MOCK_CONFIG_FILE_NAME
+      )
       .map((file) => path.parse(file).name);
   }
 
   /**
-   * Get other scene file, if you want current actived scene, use `this.scene` getter
-   * @param {string} scene scene name
-   */
-  getScene(scene) {
-    return this.readFile(this.getSceneFilePath(scene));
-  }
-
-  /**
-   * Update or create a scene file, if you want to update current actived scene, use `this.scene` setter
-   * @param {string} scene scene name
-   */
-  setScene(scene, data) {
-    this.writeFile(this.getSceneFilePath(scene), data);
-    return this;
-  }
-
-  /**
-   * Delete a scene file
+   * Update the selected scene in the config file
    * @param {string} scene
    */
-  delScene(scene) {
-    this.deleteFile(this.getSceneFilePath(scene));
+  updateSceneSelected(scene) {
+    this.writeJSONFile(this.configPath, {
+      ...this.config,
+      scene,
+    });
     return this;
   }
 
@@ -337,7 +316,7 @@ class Scene extends IO {
   constructor(apiId, scene) {
     super();
     this.apiId = apiId;
-    //this.scene = scene;
+    this.scene = scene;
     this.folderPath = path.join(this.root, apiId);
     this.sceneFilePath = path.join(this.folderPath, `${scene}.json`);
     this.ensureSceneFolderExist();
@@ -346,6 +325,7 @@ class Scene extends IO {
   ensureSceneFolderExist() {
     fs.mkdirSync(this.folderPath, { recursive: true });
   }
+
   /**
    * get current scene data
    * @returns {string} return scene data, return null if file not exist
@@ -359,7 +339,13 @@ class Scene extends IO {
    * @param {string} data
    */
   setScene(data) {
-    this.writeFile(this.sceneFilePath, data);
+    this.writeJSONFile(this.sceneFilePath, data);
+
+    const api = new MockAPI(this.apiId);
+    if (!api.config.scene) {
+      api.updateSceneSelected(this.scene);
+    }
+
     return this;
   }
 

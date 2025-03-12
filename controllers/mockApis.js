@@ -80,33 +80,6 @@ exports.updateMockApi = async (req, res) => {
 };
 
 /**
- * Update an existing Mock-API, with scene data updated
- * @deprecated 等 scenes.js 完善后废弃该接口 @lin
- */
-exports.updateMockApiWithScene = async (req, res) => {
-  try {
-    const { apiId } = req.params;
-    const { path, description, method, scene, response } = req.body;
-
-    const mockApi = services.mockApis.updateMockApiWithScene(apiId, {
-      path,
-      description,
-      method,
-      scene,
-      response,
-    });
-
-    res.json({ message: 'Mock API updated successfully!', id: mockApi.id });
-  } catch (error) {
-    console.error('Error updating mock API:', error);
-    if (error.errorCode === 'INVALID_API') {
-      return res.status(400).json({ error: 'Invalid API or API does not exists' });
-    }
-    res.status(500).json({ error: 'Failed to update mock API' });
-  }
-};
-
-/**
  * Delete an existing Mock-API, will delete the folder of the API, including the scene data
  */
 exports.deleteMockApi = async (req, res) => {

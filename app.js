@@ -5,7 +5,7 @@ const cors = require('cors');
 const config = require('./config');
 const mockApis = require('./routes/mockApis');
 const scenes = require('./routes/scenes');
-
+const openAi = require('./routes/openAi');
 const app = express();
 
 // Middleware
@@ -15,6 +15,7 @@ app.use(cors());
 // Restful API Routes
 app.use('/v1/mock-apis', mockApis);
 app.use('/v1/scenes', scenes);
+app.use('/v1/open-ai', openAi);
 
 // Static files Routes
 app.use(express.static(path.join(__dirname, 'public')));

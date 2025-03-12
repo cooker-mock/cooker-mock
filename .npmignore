@@ -10,3 +10,5 @@ docs/
 *.lock
 .DS_Store
 .idea/
+
+.env
