@@ -1,6 +1,6 @@
 {
   "name": "cooker-mock",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "The best front-end local mocking tool ever!",
   "main": "index.js",
   "repository": "git@github.com:cooker-mock/cooker-mock.git",
