@@ -17,8 +17,37 @@ app.use('/v1/mock-apis', mockApis);
 app.use('/v1/scenes', scenes);
 app.use('/v1/open-ai', openAi);
 
-// Static files Routes
-app.use(express.static(path.join(__dirname, 'public')));
+// configure correct MIME types
+express.static.mime.define({
+  'application/javascript': ['js', 'mjs'],
+  'text/css': ['css'],
+  'text/html': ['html'],
+});
+
+// static files path - public
+app.use(
+  express.static(path.join(__dirname, 'public'), {
+    setHeaders: (res, path) => {
+      if (path.endsWith('.js') || path.endsWith('.mjs')) {
+        res.set('Content-Type', 'application/javascript');
+      }
+      res.set('Cache-Control', 'no-cache');
+    },
+  })
+);
+
+// static files path - web ui
+app.use(
+  express.static(path.join(__dirname, config.WEB_UI_DIST_RELATIVE_PATH), {
+    setHeaders: (res, path) => {
+      if (path.endsWith('.js') || path.endsWith('.mjs')) {
+        res.set('Content-Type', 'application/javascript');
+      }
+      res.set('Cache-Control', 'no-cache');
+    },
+  })
+);
+
 // Fallback other undefined routes to React App
 app.get('*', (req, res) => {
   res.sendFile(path.join(path.join(__dirname, config.WEB_UI_DIST_RELATIVE_PATH), 'index.html'));
