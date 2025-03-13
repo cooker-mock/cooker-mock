@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Space, message, Form, Input, Select, Typography, Drawer } from 'antd';
+import { Button, Space, message, Form, Input, Select, Typography, Drawer, Tooltip } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import Editor from '@monaco-editor/react';
@@ -15,12 +15,14 @@ const defaultApiValues = {
 
 const defaultSceneResponse = {
   success: '',
-  data: {
-    name: '',
-    age: '',
-    studentId: '',
-    message: '',
-  },
+  data: [
+    {
+      name: '',
+      age: '',
+      studentId: '',
+      message: '',
+    },
+  ],
 };
 
 const MockApiList = () => {
@@ -255,8 +257,6 @@ const MockApiList = () => {
       const response = await axios.post(`/v1/open-ai/ai-filling`, {
         response: sceneEditorContent,
       });
-      // Verify the response is a valid JSON
-      JSON.parse(response.data);
       setSceneEditorContent(response.data);
       message.success('AI Filling successfully');
     } catch (error) {
@@ -366,9 +366,11 @@ const MockApiList = () => {
             label={
               <Space size="large">
                 <Text>Response Data (JSON)</Text>
-                <Button type="primary" onClick={handleAiFilling} loading={isAiFillingLoading}>
-                  AI Filling
-                </Button>
+                <Tooltip title="AI Filling is a feature that uses AI to generate synthetic data for the API response data. You can leave the value empty, or write comments (with //) in the JSON data to guide the AI to generate the data.">
+                  <Button type="primary" onClick={handleAiFilling} loading={isAiFillingLoading}>
+                    AI Filling
+                  </Button>
+                </Tooltip>
               </Space>
             }
           >

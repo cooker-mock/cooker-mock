@@ -5,6 +5,11 @@ module.exports = {
   PORT: 8088,
 
   /**
+   * WebSocket server
+   */
+  WEBSOCKET_PORT: 8077,
+
+  /**
    * React App build path
    */
   WEB_UI_DIST_RELATIVE_PATH: 'public/web-ui-dist',

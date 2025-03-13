@@ -1,12 +1,33 @@
+const HOST = 'http://localhost:8088';
+const WEBSOCKET_HOST = 'ws://localhost:8077';
+
+const log = (...args) => {
+  console.log(`%c👨‍🍳 ${args[0]}`, 'color: green', ...args.slice(1));
+};
+
 (async function () {
   let mockApis = [];
   let mode = 'mock';
 
+  const ws = new WebSocket(WEBSOCKET_HOST);
+  ws.onopen = () => {
+    log('Cooker is running...');
+  };
+  ws.onmessage = (event) => {
+    const message = JSON.parse(event.data);
+
+    if (message.type === 'FILE_CHANGE') {
+      console.log('Mock file changed', message.path);
+      // refresh api list
+      fetchMockApis();
+    }
+  };
+
   const fetchMockApis = async () => {
     try {
-      const response = await fetch('http://localhost:8088/v1/mock-apis/with-scene');
+      const response = await fetch(`${HOST}/v1/mock-apis`);
       mockApis = await response.json();
-      console.log('Fetched mock APIs:', mockApis);
+      log(`${mockApis.length} mock APIs found`, mockApis);
     } catch (error) {
       console.error('Error fetching mock APIs:', error);
     }
@@ -34,12 +55,15 @@
   const interceptFetch = async function (input, init = {}) {
     const url = typeof input === 'string' ? input : input.url;
     const method = init.method || 'GET';
-    console.log('Intercepting fetch request:', url, method);
 
     const matchedApi = matchApi(url, method);
     if (matchedApi) {
-      console.log('Mocking fetch request:', url);
-      return new Response(matchedApi.response, {
+      log('Intercepting request:', url, matchedApi);
+      const sceneResponse = await fetch(`${HOST}/v1/scenes/${matchedApi.id}/${matchedApi.scene}`);
+      const sceneData = JSON.parse(await sceneResponse.json());
+      log('Returning mock response:', sceneData);
+
+      return new Response(JSON.stringify(sceneData), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
       });
@@ -56,7 +80,7 @@
   const interceptXHRSend = function (body) {
     const matchedApi = matchApi(this._url, this._method);
     if (matchedApi) {
-      console.log('Mocking XHR request:', this._url);
+      log('Mocking XHR request:', this._url);
       this.onload = () => {
         this.readyState = 4;
         this.status = 200;
