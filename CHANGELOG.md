@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.1](https://github.com/cooker-mock/cooker-mock/compare/v1.2.2...v1.4.1) (2025-03-13)
+
+
+### Features
+
+* websocket support & bug fix ([19d366d](https://github.com/cooker-mock/cooker-mock/commit/19d366d4b5d1773547d12b85983c13bbcdf145e3))
+
 ## 1.4.0 (2025-03-12)
 
 
