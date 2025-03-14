@@ -3,6 +3,7 @@
  * 
  * @file app.js
  * @author Boyuan Zhang, <249454830>, <bzhang@algomau.ca>
+ * @author Lin Zhao, <249416700>, <lizhao@algomau.ca>
  */
 // import dependencies
 const express = require('express');
