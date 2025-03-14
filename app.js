@@ -1,3 +1,10 @@
+/**
+ * This file is the entry point of the application.
+ * 
+ * @file app.js
+ * @author Boyuan Zhang, <249454830>, <bzhang@algomau.ca>
+ */
+// import dependencies
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');

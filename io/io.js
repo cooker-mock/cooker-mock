@@ -1,4 +1,10 @@
 /**
+ * This module provides the IO class, which is responsible for reading and writing mock 
+ * data/scene data from/to the file system directly.
+ * 
+ * @file io/io.js
+ * @module io/io
+ * @author Boyuan Zhang, <249454830>, <bzhang@algomau.ca>
  * @fileoverview handle mock data read/write in file system of users' dev env.
  * @todo need more abstraction to handle mock data read/write, still to many low-level codes in the routes/api.js
  */
@@ -7,6 +13,9 @@ const fs = require('fs');
 const path = require('path');
 const { MOCK_DATA_ROOT_DIR_NAME, USER_PROJECT_PATH } = require('../config');
 
+/**
+ *  Get the root path of the mock data folder
+ */
 const getMockDataRootPath = () => {
   const userProjectPath = USER_PROJECT_PATH
     ? path.resolve(process.cwd(), USER_PROJECT_PATH)
@@ -16,10 +25,13 @@ const getMockDataRootPath = () => {
 
 /**
  * FileIO base class
+ * 
+ * @class
  */
 class FileIO {
   /**
-   *
+   * Read file from file system
+   * 
    * @param {string} filePath
    * @returns {string} return file content, return null if file not exist
    */
@@ -34,7 +46,8 @@ class FileIO {
   }
 
   /**
-   *
+   * Write file to file system
+   * 
    * @param {string} filePath
    * @param {string} data
    */
@@ -48,13 +61,15 @@ class FileIO {
   }
 
   /**
-   *
+   * Read JSON file from file system
+   * 
    * @param {string} filePath
    * @returns {Object} Parsed JSON, return null if file not exist
    */
   readJSONFile(filePath) {
     if (!fs.existsSync(filePath)) return null;
 
+    // Read file content and return parsed JSON
     try {
       const data = fs.readFileSync(filePath, 'utf8');
       try {
@@ -70,7 +85,8 @@ class FileIO {
   }
 
   /**
-   *
+   * Write JSON file to file system
+   * 
    * @param {string} filePath
    * @param {Object} data Must be JSON serializable
    */
@@ -91,7 +107,11 @@ class FileIO {
       throw error;
     }
   }
-
+  /**
+   * Delete file from file system
+   * 
+   * @param {string} filePath 
+   */
   deleteFile(filePath) {
     if (fs.existsSync(filePath)) {
       try {
@@ -107,7 +127,11 @@ class FileIO {
       };
     }
   }
-
+  /**
+   * Delete folder from file system
+   * 
+   * @param {string} folderPath 
+   */
   deleteFolder(folderPath) {
     if (fs.existsSync(folderPath)) {
       try {
@@ -127,32 +151,46 @@ class FileIO {
 
 /**
  * handle Mock-API I/O in file system
+ * 
+ * @class
  */
 class IO extends FileIO {
+  /**
+   * class IO is responsible for supporting the I/O operations of the mock data in the file system.
+   * 
+   * @constructor
+   * 
+   */
   constructor() {
     super();
     this.root = getMockDataRootPath(); // Get the root path of the mock data folder first, this is where all mock data files stored
     this.ensureRootFolderExist();
   }
-
+  /**
+   * Ensures that the root folder exists and contains necessary configuration files.
+   * If the root folder does not exist, it will be created.
+   * If the root folder does not exist, it will be created.
+   */
   ensureRootFolderExist() {
+    // Create the root folder if it does not exist (recursive ensures parent directories are created)
     fs.mkdirSync(this.root, { recursive: true });
-
+    // Ensure the .env file exists, create it with a placeholder if missing
     if (!fs.existsSync(path.join(this.root, '.env'))) {
       fs.writeFileSync(path.join(this.root, '.env'), `OPENAI_API_KEY=`, 'utf8');
     }
-
+    // Ensure the .gitignore file exists, add `.env` to it if missing
     if (!fs.existsSync(path.join(this.root, '.gitignore'))) {
       fs.writeFileSync(path.join(this.root, '.gitignore'), `.env`, 'utf8');
     }
-
+    // Ensure the .npmignore file exists, add `.env` to it if missing
     if (!fs.existsSync(path.join(this.root, '.npmignore'))) {
       fs.writeFileSync(path.join(this.root, '.npmignore'), `.env`, 'utf8');
     }
   }
 
   /**
-   *
+   * Get the paths of APIs
+   * 
    * @returns {string[]} return all API ids, in the root path
    */
   getAllApis() {
@@ -166,7 +204,8 @@ class IO extends FileIO {
   }
 
   /**
-   * Get the last modified time of an API
+   * Get the last modified time of an API from the modification time of the API folder
+   * 
    * @param {string} apiId API's ID
    * @returns {Date} last modified time
    */
@@ -176,6 +215,7 @@ class IO extends FileIO {
       return new Date(0);
     }
 
+    // Get the modification time of the API folder
     try {
       const stat = fs.statSync(apiPath);
       return stat.mtime;
@@ -187,6 +227,7 @@ class IO extends FileIO {
 
   /**
    * Get all APIs and their modification times
+   * 
    * @returns {Array<{id: string, lastModified: Date}>} API list and modification times
    */
   getAllApisWithModTime() {
@@ -200,6 +241,7 @@ class IO extends FileIO {
 
   /**
    * Get the OpenAI API key from the .env file
+   * 
    * @returns {string} OpenAI API key
    */
   getOpenAIAPIKey() {

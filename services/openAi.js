@@ -1,8 +1,16 @@
+/**
+ * OpenAI service
+ * 
+ * @file services/openAi.js
+ * @module services/openAi
+ * @author Boyuan Zhang, <249454830>, <bzhang@algomau.ca>
+ */
 const OpenAI = require('openai');
 const { IO } = require('../io');
 
 /**
- * AI Filling a scene for a mock API
+ * AI help fill fields in a scene for a mock API
+ * 
  * @param {string} sceneResponse
  * @returns {string}
  */

@@ -1,6 +1,9 @@
 /**
- * @fileoverview handle mock data read/write in file system of users' dev env.
+ * handle Mock-API I/O in file system.
+ *
+ * @fileoverview handle mock data read/write in file system.
  * @todo need more abstraction to handle mock data read/write, still to many low-level codes in the routes/api.js
+ * @author Boyuan Zhang, <249454830>, <bzhang@algomau.ca>
  */
 
 const fs = require('fs');
@@ -14,14 +17,20 @@ const { MOCK_CONFIG_FILE_NAME } = require('../config');
 class MockAPI extends IO {
   /**
    * Generate a unique ID for a new Mock-API
-   * @param {string} path
-   * @returns
+   * 
+   * @param {string} path - the path of the Mock-API
+   * @returns {string} return a unique ID
    */
   static createID(path) {
     const UUID = Math.random().toString(36).substring(2, 8);
     return `http__${path.toLowerCase().replace(/\//g, '_').slice(0, 10)}_ID_${UUID}`;
   }
 
+  /**
+   * 
+   * @constructor create a new Mock-API instance
+   * @param {string} apiId - the ID of the Mock-API
+   */
   constructor(apiId) {
     super();
     this.id = apiId;
@@ -30,6 +39,9 @@ class MockAPI extends IO {
     this.ensureApiFolderExist();
   }
 
+  /**
+   * Ensure the folder of the Mock-API exists
+   */
   ensureApiFolderExist() {
     fs.mkdirSync(this.folderPath, { recursive: true });
   }
@@ -41,6 +53,7 @@ class MockAPI extends IO {
     const folder = fs.existsSync(this.folderPath);
     const config = fs.existsSync(this.configPath);
 
+    // folder and config file should exist
     if (!folder) {
       console.error(`MockAPI is invalid. Folder does not exist: ${this.folderPath}`);
     }
@@ -51,15 +64,27 @@ class MockAPI extends IO {
     return folder && config;
   }
 
+  /**
+   * Get the config data of the Mock-API
+   * 
+   * @returns {Object} return the json
+   */
   get config() {
     return this.readJSONFile(this.configPath);
   }
 
+  /**
+   * Set the config data of the Mock-API
+   * 
+   * @param {Object} data - the data to be written to json config file
+   */
   set config(data) {
     this.writeJSONFile(this.configPath, data);
   }
 
   /**
+   * Get the scene datas of a Mock-API
+   * 
    * @returns {string[]} return all scene names in the folder
    */
   get sceneList() {
@@ -74,6 +99,7 @@ class MockAPI extends IO {
 
   /**
    * Update the selected scene in the config file
+   * 
    * @param {string} scene
    */
   updateSceneSelected(scene) {
