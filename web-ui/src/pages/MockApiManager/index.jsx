@@ -1,3 +1,11 @@
+/**
+ * MockApiList Component provides a UI for managing mock APIs, including creating, editing,
+ * and deleting APIs and their associated response scenes.
+ *  
+ * @file MockApiList.jsx
+ * @author Boyuan Zhang, <249454830>, <bzhang@algomau.ca>
+ * @author Xicheng Yin, <249508610>, <xyin@algomau.ca>
+ */
 import React, { useState, useEffect } from 'react';
 import { Button, Space, message, Form, Input, Select, Typography, Drawer, Tooltip } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
@@ -9,10 +17,12 @@ import ApiCard from '../../components/ApiCard';
 const { Title, Text } = Typography;
 const { Option } = Select;
 
+/** Default values for a new API */
 const defaultApiValues = {
   method: 'ALL',
 };
 
+/** Default response structure for a new scene */
 const defaultSceneResponse = {
   success: '',
   data: [
@@ -25,6 +35,10 @@ const defaultSceneResponse = {
   ],
 };
 
+/**
+ * MockApiList Component - Handles CRUD operations for mock APIs
+ * @returns {JSX.Element} The Mock API management interface
+ */
 const MockApiList = () => {
   const [mockApis, setMockApis] = useState([]);
 
@@ -41,7 +55,9 @@ const MockApiList = () => {
 
   const sceneEditorRef = React.useRef(null);
 
-  // Fetch all Mock APIs
+  /**
+   * Fetches all mock APIs
+   */
   const fetchMockApis = async () => {
     try {
       const response = await axios.get('/v1/mock-apis');
@@ -56,7 +72,10 @@ const MockApiList = () => {
     fetchMockApis();
   }, []);
 
-  // Delete API
+  /**
+   * Deletes a mock API
+   * @param {string} apiId - The ID of the API to delete
+   */
   const handleDelete = async (apiId) => {
     try {
       await axios.delete(`/v1/mock-apis/${apiId}`);
@@ -68,13 +87,16 @@ const MockApiList = () => {
     }
   };
 
-  // Create new API
+  /** Opens the drawer to create a new API */
   const handleCreateApi = () => {
     form.resetFields();
     setIsApiDrawerVisible(true);
   };
 
-  // Edit API
+  /**
+   * Edit an existing API
+   * @param {string} apiId - The ID of the API to edit
+   */
   const handleEdit = async (apiId) => {
     try {
       const apiData = mockApis.find((api) => api.id === apiId);
@@ -96,14 +118,16 @@ const MockApiList = () => {
     }
   };
 
-  // Save new API
+  /**
+   * Saves an API
+   */
   const handleSaveApi = async () => {
     try {
       const values = await form.validateFields();
       const { path, description, method, scene } = values;
 
       if (selectedApiId) {
-        // 更新现有API
+        // update selected API
         await axios.put(`/v1/mock-apis/${selectedApiId}`, {
           path,
           description,
@@ -112,7 +136,7 @@ const MockApiList = () => {
         });
         message.success('API updated successfully');
       } else {
-        // 创建新API
+        // create new API
         await axios.post('/v1/mock-apis', {
           path,
           description,
@@ -123,7 +147,7 @@ const MockApiList = () => {
       }
 
       setIsApiDrawerVisible(false);
-      setSelectedApiId(null); // 重置selectedApiId
+      setSelectedApiId(null); // Reset selectedApiId
       fetchMockApis();
     } catch (error) {
       console.error('Failed to save API:', error);
@@ -131,7 +155,11 @@ const MockApiList = () => {
     }
   };
 
-  // Open scene drawer
+  /**
+   * Opens the scene drawer for editing or creating
+   * @param {string} apiId - The ID of the API
+   * @param {string} [scene] - The scene name to edit
+   */
   const openSceneDrawer = async (apiId, scene) => {
     setSelectedApiId(apiId);
 
@@ -150,13 +178,17 @@ const MockApiList = () => {
       setIsSceneDrawerVisible(true);
     }
   };
-
+  /**
+  * Closes the scene drawer
+  */
   const handleSceneDrawerClose = () => {
     setIsSceneDrawerVisible(false);
     setSelectedApiId(null);
   };
 
-  // Create new scene
+  /**
+   * Handles the creation of a new scene
+   */
   const handleCreateScene = async () => {
     try {
       const values = await sceneForm.validateFields();
@@ -213,7 +245,11 @@ const MockApiList = () => {
       message.error('Failed to switch scene');
     }
   };
-
+  /**
+   * Deletes a scene from an API
+   * @param {string} apiId - The ID of the API to delete a scene from
+   * @param {string} scene - The name of the scene to delete
+   */
   const handleDeleteScene = async (apiId, scene) => {
     try {
       await axios.delete(`/v1/scenes/${apiId}/${scene}`);
@@ -225,7 +261,11 @@ const MockApiList = () => {
     }
   };
 
-  // Handle scene editor mount
+  /**
+   * Handles scene editor mount
+   * @param {object} editor - The editor instance
+   * @param {object} monaco - Monaco editor instance
+   */ 
   const handleSceneEditorDidMount = (editor, monaco) => {
     sceneEditorRef.current = editor;
 
@@ -246,11 +286,17 @@ const MockApiList = () => {
     });
   };
 
-  // Handle scene editor content change
+  /**
+   * Handles scene editor content change
+   * @param {string} value - New value of the editor content
+   */
   const handleSceneEditorChange = (value) => {
     setSceneEditorContent(value);
   };
 
+  /**
+   * Handles AI Filling
+   */
   const handleAiFilling = async () => {
     try {
       setIsAiFillingLoading(true);
@@ -266,7 +312,7 @@ const MockApiList = () => {
       setIsAiFillingLoading(false);
     }
   };
-
+  
   return (
     <div style={{ padding: '20px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>

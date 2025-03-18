@@ -11,6 +11,8 @@
 const fs = require('fs');
 const path = require('path');
 const { IO } = require('./io');
+const MockAPI = require('./mockApi');
+
 
 /**
  * Provide I/O API for a Scene
