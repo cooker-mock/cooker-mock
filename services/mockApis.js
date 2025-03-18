@@ -1,9 +1,16 @@
+/**
+ * Mock API service
+ * 
+ * @file services/mockApis.js
+ * @module services/mockApis
+ * @author Boyuan Zhang, <249454830>, <bzhang@algomau.ca>
+ */
 const { IO, MockAPI, Scene } = require('../io');
-
 const io = new IO();
 
 /**
- *
+ * Get all mock API instances
+ * 
  * @param {string[]} apiIds
  * @returns {MockAPI[]}
  */
@@ -12,6 +19,8 @@ const getMockApiInstances = (apiIds) => {
 };
 
 /**
+ * Get all mock APIs
+ * 
  * @param {boolean} config.withResponse - whether include response data
  * @returns {Object[]} return all mock APIs
  */
@@ -55,7 +64,8 @@ const getMockApis = (config) => {
 };
 
 /**
- *
+ * Update a mock API by apiId and data
+ * 
  * @param {string} apiId
  * @param {Object} data
  * @returns {MockAPI}
@@ -81,6 +91,7 @@ const updateMockApi = (apiId, data) => {
 };
 
 /**
+ * create a mock API
  *
  * @param {Object} data
  * @returns {MockAPI}
@@ -115,6 +126,7 @@ const createMockApi = (data) => {
 };
 
 /**
+ * Delete a mock API by inputed apiId
  *
  * @param {string} apiId
  * @returns {MockAPI}
@@ -132,6 +144,7 @@ const deleteMockApi = (apiId) => {
   }
 };
 
+// Export all methods
 module.exports = {
   getMockApis,
   getMockApiInstances,

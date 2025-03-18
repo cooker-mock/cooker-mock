@@ -1,17 +1,39 @@
+/**
+ * This module is responsible for watching file changes and notifying clients via WebSocket.
+ * 
+ * @file io/ioWatcher.js
+ * @module io/ioWatcher
+ * @author Boyuan Zhang, <249454830>, <bzhang@algomau.ca>
+ */
 const WebSocket = require('ws');
 const chokidar = require('chokidar');
 const { IO } = require('./io');
 const config = require('../config');
 
+/**
+ * Class representing a file watcher
+ * 
+ * @extends IO
+ * @class
+ */
 class IoWatcher extends IO {
+  /**
+   * Constructor for IoWatcher
+   * Initializes a file watcher using Chokidar.
+   */
   constructor() {
     super();
+
+    // Initialize Chokidar watcher for monitoring file changes
     this.watcher = chokidar.watch(this.root, {
       persistent: true,
       awaitWriteFinish: true,
     });
   }
 
+  /**
+   * Initializes the WebSocket server to notify clients about file changes.
+   */
   initWebSocketServer = () => {
     const wss = new WebSocket.Server({ port: config.WEBSOCKET_PORT });
 
@@ -20,7 +42,12 @@ class IoWatcher extends IO {
     wss.on('connection', (ws) => {
       console.log('WebSocket client connected');
 
-      // listen file change event
+      /**
+       * Handles file change events.
+       * Sends a JSON message to the WebSocket client when a file is added, changed, or deleted.
+       * 
+       * @param {string} path - The path of the file that changed.
+       */
       const fileChangeHandler = (path) => {
         console.log(`File changed: ${path}`);
         ws.send(
