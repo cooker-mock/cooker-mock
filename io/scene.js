@@ -52,7 +52,8 @@ class Scene extends IO {
     this.writeJSONFile(this.sceneFilePath, data);
 
     const api = new MockAPI(this.apiId);
-    if (!api.config.scene) {
+    const config = api.getConfig();
+    if (!config.scene) {
       api.updateSceneSelected(this.scene);
     }
 

@@ -1,7 +1,7 @@
 /**
- * This module provides the IO class, which is responsible for reading and writing mock 
+ * This module provides the IO class, which is responsible for reading and writing mock
  * data/scene data from/to the file system directly.
- * 
+ *
  * @file io/io.js
  * @module io/io
  * @author Boyuan Zhang, <249454830>, <bzhang@algomau.ca>
@@ -25,13 +25,13 @@ const getMockDataRootPath = () => {
 
 /**
  * FileIO base class
- * 
+ *
  * @class
  */
 class FileIO {
   /**
    * Read file from file system
-   * 
+   *
    * @param {string} filePath
    * @returns {string} return file content, return null if file not exist
    */
@@ -47,7 +47,7 @@ class FileIO {
 
   /**
    * Write file to file system
-   * 
+   *
    * @param {string} filePath
    * @param {string} data
    */
@@ -62,7 +62,7 @@ class FileIO {
 
   /**
    * Read JSON file from file system
-   * 
+   *
    * @param {string} filePath
    * @returns {Object} Parsed JSON, return null if file not exist
    */
@@ -86,7 +86,7 @@ class FileIO {
 
   /**
    * Write JSON file to file system
-   * 
+   *
    * @param {string} filePath
    * @param {Object} data Must be JSON serializable
    */
@@ -109,8 +109,8 @@ class FileIO {
   }
   /**
    * Delete file from file system
-   * 
-   * @param {string} filePath 
+   *
+   * @param {string} filePath
    */
   deleteFile(filePath) {
     if (fs.existsSync(filePath)) {
@@ -129,8 +129,8 @@ class FileIO {
   }
   /**
    * Delete folder from file system
-   * 
-   * @param {string} folderPath 
+   *
+   * @param {string} folderPath
    */
   deleteFolder(folderPath) {
     if (fs.existsSync(folderPath)) {
@@ -151,15 +151,15 @@ class FileIO {
 
 /**
  * handle Mock-API I/O in file system
- * 
+ *
  * @class
  */
 class IO extends FileIO {
   /**
    * class IO is responsible for supporting the I/O operations of the mock data in the file system.
-   * 
+   *
    * @constructor
-   * 
+   *
    */
   constructor() {
     super();
@@ -190,7 +190,7 @@ class IO extends FileIO {
 
   /**
    * Get the paths of APIs
-   * 
+   *
    * @returns {string[]} return all API ids, in the root path
    */
   getAllApis() {
@@ -204,44 +204,8 @@ class IO extends FileIO {
   }
 
   /**
-   * Get the last modified time of an API from the modification time of the API folder
-   * 
-   * @param {string} apiId API's ID
-   * @returns {Date} last modified time
-   */
-  getApiLastModified(apiId) {
-    const apiPath = path.join(this.root, apiId);
-    if (!fs.existsSync(apiPath)) {
-      return new Date(0);
-    }
-
-    // Get the modification time of the API folder
-    try {
-      const stat = fs.statSync(apiPath);
-      return stat.mtime;
-    } catch (error) {
-      console.error(`Failed to get modification time for API ${apiId}:`, error);
-      return new Date(0);
-    }
-  }
-
-  /**
-   * Get all APIs and their modification times
-   * 
-   * @returns {Array<{id: string, lastModified: Date}>} API list and modification times
-   */
-  getAllApisWithModTime() {
-    const apiIds = this.getAllApis();
-
-    return apiIds.map((apiId) => ({
-      id: apiId,
-      lastModified: this.getApiLastModified(apiId),
-    }));
-  }
-
-  /**
    * Get the OpenAI API key from the .env file
-   * 
+   *
    * @returns {string} OpenAI API key
    */
   getOpenAIAPIKey() {

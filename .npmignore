@@ -12,3 +12,5 @@ docs/
 .idea/
 
 .env
+
+.cursor/

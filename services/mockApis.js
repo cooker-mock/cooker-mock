@@ -1,6 +1,6 @@
 /**
  * Mock API service
- * 
+ *
  * @file services/mockApis.js
  * @module services/mockApis
  * @author Boyuan Zhang, <249454830>, <bzhang@algomau.ca>
@@ -9,36 +9,20 @@ const { IO, MockAPI, Scene } = require('../io');
 const io = new IO();
 
 /**
- * Get all mock API instances
- * 
- * @param {string[]} apiIds
- * @returns {MockAPI[]}
- */
-const getMockApiInstances = (apiIds) => {
-  return apiIds.map((apiId) => new MockAPI(apiId));
-};
-
-/**
  * Get all mock APIs
- * 
+ *
  * @param {boolean} config.withResponse - whether include response data
  * @returns {Object[]} return all mock APIs
  */
 const getMockApis = (config) => {
   const { withResponse } = config || {};
 
-  // Get all APIs and their modification times
-  const apisWithModTime = io.getAllApisWithModTime();
+  const result = io
+    .getAllApis()
+    .map((apiId) => {
+      const mockApi = new MockAPI(apiId);
+      const config = mockApi.getConfig();
 
-  // Sort by modification time in descending order
-  apisWithModTime.sort((a, b) => b.lastModified - a.lastModified);
-
-  // Get the sorted API ID list
-  const sortedApiIds = apisWithModTime.map((api) => api.id);
-
-  const result = getMockApiInstances(sortedApiIds)
-    .map((mockApi) => {
-      const config = mockApi.config;
       if (config) {
         const sceneList = mockApi.sceneList;
         let response = null;
@@ -53,11 +37,15 @@ const getMockApis = (config) => {
           ...config,
           sceneList,
           response,
-          lastModified: io.getApiLastModified(mockApi.id).toISOString(),
         };
       }
       return null;
     })
+    .sort((a, b) => {
+      const dateA = a.lastModified ? new Date(a.lastModified).getTime() : 0;
+      const dateB = b.lastModified ? new Date(b.lastModified).getTime() : 0;
+      return dateB - dateA;
+    }) // sort by modification time in descending order
     .filter(Boolean); // filter null
 
   return result;
@@ -65,7 +53,7 @@ const getMockApis = (config) => {
 
 /**
  * Update a mock API by apiId and data
- * 
+ *
  * @param {string} apiId
  * @param {Object} data
  * @returns {MockAPI}
@@ -77,12 +65,13 @@ const updateMockApi = (apiId, data) => {
     throw { errorCode: 'INVALID_ID', message: 'API ID is required' };
   }
 
-  if (!mockApi.valid) {
+  if (!mockApi.isValid()) {
     throw { errorCode: 'INVALID_API', message: 'API is invalid' };
   }
 
   try {
-    mockApi.config = data;
+    const shouldUpdateLastModified = !('scene' in data);
+    mockApi.setConfig(data, true, shouldUpdateLastModified);
   } catch (error) {
     console.error('Failed to update mock API', error);
     throw error;
@@ -107,7 +96,7 @@ const createMockApi = (data) => {
   const mockApi = new MockAPI(apiId);
 
   try {
-    mockApi.config = { path, description, method, scene };
+    mockApi.setConfig({ path, description, method, scene });
   } catch (error) {
     mockApi.delete();
     console.error('Failed to create mock API', error);
@@ -147,7 +136,6 @@ const deleteMockApi = (apiId) => {
 // Export all methods
 module.exports = {
   getMockApis,
-  getMockApiInstances,
   createMockApi,
   updateMockApi,
   deleteMockApi,

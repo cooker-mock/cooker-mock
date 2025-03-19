@@ -1,7 +1,7 @@
 /**
  * MockApiList Component provides a UI for managing mock APIs, including creating, editing,
  * and deleting APIs and their associated response scenes.
- *  
+ *
  * @file MockApiList.jsx
  * @author Boyuan Zhang, <249454830>, <bzhang@algomau.ca>
  * @author Xicheng Yin, <249508610>, <xyin@algomau.ca>
@@ -124,7 +124,7 @@ const MockApiList = () => {
   const handleSaveApi = async () => {
     try {
       const values = await form.validateFields();
-      const { path, description, method, scene } = values;
+      const { path, description, method } = values;
 
       if (selectedApiId) {
         // update selected API
@@ -132,7 +132,6 @@ const MockApiList = () => {
           path,
           description,
           method,
-          scene,
         });
         message.success('API updated successfully');
       } else {
@@ -141,7 +140,6 @@ const MockApiList = () => {
           path,
           description,
           method,
-          scene,
         });
         message.success('API created successfully');
       }
@@ -179,8 +177,8 @@ const MockApiList = () => {
     }
   };
   /**
-  * Closes the scene drawer
-  */
+   * Closes the scene drawer
+   */
   const handleSceneDrawerClose = () => {
     setIsSceneDrawerVisible(false);
     setSelectedApiId(null);
@@ -265,7 +263,7 @@ const MockApiList = () => {
    * Handles scene editor mount
    * @param {object} editor - The editor instance
    * @param {object} monaco - Monaco editor instance
-   */ 
+   */
   const handleSceneEditorDidMount = (editor, monaco) => {
     sceneEditorRef.current = editor;
 
@@ -312,7 +310,7 @@ const MockApiList = () => {
       setIsAiFillingLoading(false);
     }
   };
-  
+
   return (
     <div style={{ padding: '20px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>

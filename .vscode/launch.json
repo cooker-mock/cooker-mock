@@ -4,7 +4,7 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Debug Cooker Mock",
+      "name": "Debug Cooker Mock Service",
       "runtimeExecutable": "nodemon",
       // "runtimeArgs": ["--inspect-brk=9229"],
       "program": "${workspaceFolder}/index.js",
@@ -18,15 +18,15 @@
     {
       "type": "node-terminal",
       "request": "launch",
-      "name": "Run Web UI",
+      "name": "Debug Web UI",
       "command": "yarn dev:ui",
       "cwd": "${workspaceFolder}"
     }
   ],
   "compounds": [
     {
-      "name": "Debug and Run UI",
-      "configurations": ["Debug Cooker Mock", "Run Web UI"]
+      "name": "Debug both Cooker Mock and Web UI",
+      "configurations": ["Debug Cooker Mock Service", "Debug Web UI"]
     }
   ]
 }

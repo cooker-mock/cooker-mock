@@ -17,7 +17,7 @@ const { MOCK_CONFIG_FILE_NAME } = require('../config');
 class MockAPI extends IO {
   /**
    * Generate a unique ID for a new Mock-API
-   * 
+   *
    * @param {string} path - the path of the Mock-API
    * @returns {string} return a unique ID
    */
@@ -27,7 +27,7 @@ class MockAPI extends IO {
   }
 
   /**
-   * 
+   *
    * @constructor create a new Mock-API instance
    * @param {string} apiId - the ID of the Mock-API
    */
@@ -49,7 +49,7 @@ class MockAPI extends IO {
   /**
    * Check if the Mock-API is valid
    */
-  get valid() {
+  isValid() {
     const folder = fs.existsSync(this.folderPath);
     const config = fs.existsSync(this.configPath);
 
@@ -66,25 +66,36 @@ class MockAPI extends IO {
 
   /**
    * Get the config data of the Mock-API
-   * 
+   *
    * @returns {Object} return the json
    */
-  get config() {
+  getConfig() {
     return this.readJSONFile(this.configPath);
   }
 
   /**
    * Set the config data of the Mock-API
-   * 
+   *
    * @param {Object} data - the data to be written to json config file
+   * @param {boolean} merge - default is true, whether to merge the data with the existing config
+   * @param {boolean} updateLastModified - default is true, whether to update the last modified time
    */
-  set config(data) {
+  setConfig(data, merge = true, updateLastModified = true) {
+    if (!data.createdAt) {
+      data.createdAt = new Date().toISOString();
+    }
+    if (updateLastModified) {
+      data.lastModified = new Date().toISOString();
+    }
+    if (merge) {
+      data = { ...this.getConfig(), ...data };
+    }
     this.writeJSONFile(this.configPath, data);
   }
 
   /**
    * Get the scene datas of a Mock-API
-   * 
+   *
    * @returns {string[]} return all scene names in the folder
    */
   get sceneList() {
@@ -99,19 +110,18 @@ class MockAPI extends IO {
 
   /**
    * Update the selected scene in the config file
-   * 
+   *
    * @param {string} scene
    */
   updateSceneSelected(scene) {
+    // deleting the scene
     if (scene === null) {
-      const config = this.config;
+      const config = this.getConfig();
       delete config.scene;
-      this.writeJSONFile(this.configPath, config);
+      this.setConfig(config, false, false);
     } else {
-      this.writeJSONFile(this.configPath, {
-        ...this.config,
-        scene,
-      });
+      // updating the scene
+      this.setConfig({ scene }, true, false);
     }
     return this;
   }

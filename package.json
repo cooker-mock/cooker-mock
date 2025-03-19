@@ -44,6 +44,7 @@
     "prepare": "cd web-ui && yarn install",
     "prepublishOnly": "yarn build:ui",
     "release:patch": "standard-version --release-as patch",
+    "release:minor": "standard-version --release-as minor",
     "release:major": "standard-version --release-as major",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",

@@ -62,12 +62,13 @@ exports.updateMockApi = async (req, res) => {
     const { apiId } = req.params;
     const { path, description, method, scene } = req.body;
 
-    const mockApi = services.mockApis.updateMockApi(apiId, {
-      path,
-      description,
-      method,
-      scene,
-    });
+    const params = { path, description, method };
+
+    if (scene) {
+      params.scene = scene;
+    }
+
+    const mockApi = services.mockApis.updateMockApi(apiId, params);
 
     res.json({ message: 'Mock API updated successfully!', id: mockApi.id });
   } catch (error) {
