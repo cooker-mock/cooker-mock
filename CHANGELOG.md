@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.1](https://github.com/cooker-mock/cooker-mock/compare/v1.5.0...v1.5.1) (2025-03-19)
+
 ## [1.5.0](https://github.com/cooker-mock/cooker-mock/compare/v1.4.5...v1.5.0) (2025-03-19)
 
 
