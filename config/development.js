@@ -1,8 +1,7 @@
 module.exports = {
   /**
    * Where the Mock-API data stored.
-   * Dev env stored in cooker-example
+   * Dev env stored in an-example-front-end-project
    */
-  // USER_PROJECT_PATH: '../project-A-front-end',
-  USER_PROJECT_PATH: '../cooker-example',
+  USER_PROJECT_PATH: '../an-example-front-end-project',
 };

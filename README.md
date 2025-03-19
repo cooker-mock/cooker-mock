@@ -5,7 +5,7 @@ The best front-end local mocking tool ever!
 
 - [cooker-mock (current)](https://github.com/cooker-mock/cooker-mock)
 - [cooker-proxy](https://github.com/cooker-mock/cooker-proxy)
-- [cooker-example](https://github.com/cooker-mock/cooker-example)
+- [an-example-front-end-project](https://github.com/cooker-mock/an-example-front-end-project)
 
 ![architecture0.3.0](docs/assets/architecture0.3.0.png)
 
