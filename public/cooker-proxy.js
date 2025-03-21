@@ -1,28 +1,29 @@
 /**
  * Cooker Proxy - A simple proxy server to mock APIs
  * This script intercepts HTTP requests and provides mock responses based on predefined rules.
- * 
+ *
  * @author Boyuan Zhang, <249454830>, <bzhang@algomau.ca>
  */
-const HOST = 'http://localhost:8088';
-const WEBSOCKET_HOST = 'ws://localhost:8077';
-
-/**
- * Log a message to console
- * @param  {...any} args  The message to log
- */
-const log = (...args) => {
-  console.log(`%c👨‍🍳 ${args[0]}`, 'color: green', ...args.slice(1));
-};
 
 /**
  * Main function to run the Cooker Proxy
- * 
+ *
  * - Connects to the WebSocket server to listen for file change events.
  * - Fetches mock API configurations from the backend.
  * - Intercepts `fetch` and `XMLHttpRequest` calls to provide mock responses.
  */
 (async function () {
+  const HOST = 'http://localhost:8088';
+  const WEBSOCKET_HOST = 'ws://localhost:8077';
+
+  /**
+   * Log a message to console
+   * @param  {...any} args  The message to log
+   */
+  const log = (...args) => {
+    console.log(`%c👨‍🍳 ${args[0]}`, 'color: green', ...args.slice(1));
+  };
+
   let mockApis = [];
   let mode = 'mock';
 
