@@ -1,9 +1,16 @@
+/**
+ * ApiCard component that displays API information and allows for scene management.
+ * @author Xicheng Yin, <249508610>, <xyin@algomau.ca>
+ */
 import { Card, Button, Space, Flex, Popconfirm, Typography } from 'antd';
 import { EditFilled, DeleteFilled, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import PropTypes from 'prop-types';
 
 import './index.less';
 
+/**
+ * Renders a card for each API with its details and actions.
+ */
 const ApiCard = ({
   api,
   handleSceneClick,
