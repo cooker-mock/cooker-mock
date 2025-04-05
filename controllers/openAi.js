@@ -1,8 +1,9 @@
-const services = require('../services');
-
 /**
  * AI Filling a scene for a mock API
+ * @author Boyuan Zhang, <249454830>, <bzhang@algomau.ca>
  */
+const services = require('../services');
+
 exports.aiFilling = async (req, res) => {
   try {
     const { response } = req.body;
