@@ -1,7 +1,7 @@
-/* The following service should be implemented:
-router.put('/:apiId/:scene', scenesController.updateScene);
-router.delete('/:apiId/:scene', scenesController.deleteScene);
-*/
+/**
+ * Controller for scenes management
+ * @author Lin Zhao, <249416700>, <lizhao@algomau.ca>
+ */
 
 const services = require('../services');
 

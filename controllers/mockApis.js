@@ -1,3 +1,7 @@
+/**
+ * Mock-API Controller
+ * @author Boyuan Zhang, <249454830>, <bzhang@algomau.ca>
+ */
 const services = require('../services');
 
 /**

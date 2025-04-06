@@ -2,7 +2,7 @@
  * App component
  * 
  * @file App.jsx
- * @author Xicheng <Yin>, <249508610>, <xyin@algomau.ca>
+ * @author Xicheng Yin, <249508610>, <xyin@algomau.ca>
  */
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
